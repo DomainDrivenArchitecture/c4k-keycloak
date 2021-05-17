@@ -2,6 +2,20 @@
 
 ## clj setup
 
+### install leiningen
+```
+sudo apt install leiningen
+```
+or manually using Instructions on https://leiningen.org/#install
+
+### install vscode + extensions
+```
+sudo apt install code
+```
+or with packages from https://code.visualstudio.com/Download
+
+install extension "Calva: Clojure & ClojureScript Interactive Programming"
+
 ## cljs / js-dev setup
 
 ```
