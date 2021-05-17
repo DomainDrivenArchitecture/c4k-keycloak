@@ -1,0 +1,16 @@
+{:source-paths ["src/main/cljc"
+                "src/main/cljs"
+                "src/main/resources"
+                "src/test/cljc"]
+ :dependencies [[aero "1.1.6"]
+                [orchestra "2021.01.01-1"]
+                [expound "0.8.9"]]
+ :dev-http {8080 "public"}
+ :builds       {:frontend {:target :browser
+                           :modules {:main {:init-fn dda.k8s-keycloak.browser/init}}
+                           :release {}
+                           :compiler-options {:optimizations :advanced}}
+                :test {:target    :node-test
+                       :output-to "target/node-tests.js"
+                       :autorun   true
+                       :repl-pprint  true}}}

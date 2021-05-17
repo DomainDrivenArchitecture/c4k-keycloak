@@ -1,0 +1,27 @@
+{:transform [{:source {:source-type :twitter
+                        ;; optional, defaults to false
+                        :include-replies? false
+                        ;; optional, defaults to false
+                        :include-rts? false
+                        ;; Replace Twitter links by Nitter
+                        :nitter-urls? 42
+                        ;; accounts you wish to mirror
+                        :accounts ["arstechnica" "WIRED"]}
+              :target {:target-type :mastodon
+                        ;; optional flag specifying wether the name of the account
+                        ;; will be appended in the post, defaults to false
+                        :append-screen-name? false
+                        ;; optional visibility flag: direct, private, unlisted, public
+                        ;; defaults to public
+                        :visibility "unlisted"
+                        ;; optional boolean to mark content as sensitive. Defaults to true.
+                        :sensitive? true
+                        ;; optional boolean defaults to false
+                        ;; only sources containing media will be posted when set to true
+                        :media-only? true
+                        ;; optional limit for the post length. Defaults to 300.
+                        :max-post-length 300
+                        ;; optional signature for posts. Defaults to "not present".
+                        :signature "#newsbot"}
+            }]
+ :auth {}}

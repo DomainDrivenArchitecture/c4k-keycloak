@@ -1,0 +1,30 @@
+{
+  "name": "k8s-keycloak",
+  "description": "Generate k8s yaml for a keycloak deployment.",
+  "author": "meissa GmbH",
+  "version": "0.1.5-SNAPSHOT",
+  "homepage": "https://gitlab.com/domaindrivenarchitecture/k8s-keycloak#readme",
+  "repository": "https://www.npmjs.com/package/k8s-keycloak",
+  "license": "APACHE2",
+  "main": "k8s-keycloak.js",
+  "bin": {
+    "k8s-keycloak": "./k8s-keycloak.js"
+  },
+  "keywords": [
+    "cljs",
+    "keycloak",
+    "k8s",
+    "deplyoment",
+    "yaml"
+  ],
+  "bugs": {
+    "url": "https://gitlab.com/domaindrivenarchitecture/k8s-keycloak/issues"
+  },
+  "dependencies": {
+    "js-yaml": "^4.0.0"
+  },
+  "devDependencies": {
+    "shadow-cljs": "^2.11.18",
+    "source-map-support": "^0.5.19"
+  }
+}

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-keycloak
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: k8s-keycloak
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: k8s-keycloak
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: keycloak
+      containers:
+        - image: domaindrivenarchitecture/keycloak
+          name: keycloak
+          env:
+            - name: MASTODON_BOT_CREDENTIALS
+              value: /credentials.edn
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config.edn
+              subPath: config.edn
+              readOnly: true
+            - name: config-volume
+              mountPath: /credentials.edn
+              subPath: credentials.edn
+              readOnly: true
+      
