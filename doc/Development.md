@@ -10,7 +10,7 @@ or manually using Instructions on https://leiningen.org/#install
 
 ### install vscode + extensions
 ```
-sudo apt install code
+sudo snap install code
 ```
 or with packages from https://code.visualstudio.com/Download
 
