@@ -32,17 +32,16 @@
    (assoc-in [:data :config.edn] (str my-config))
    (assoc-in [ :data :credentials.edn] (str my-auth))))
 
-(defn generate-deployment [config]
-  (let [user (:user config)
-        password (:password config)]
+(defn generate-deployment [my-auth]
+  (let [{:keys [user-name user-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
      (assoc-in [:spec :template :spec :containers]
                [{:name "keycloak"
                  :image "quay.io/keycloak/keycloak:13.0.0"
                  :env
-                 [{:name "KEYCLOAK_USER", :value user}
-                  {:name "KEYCLOAK_PASSWORD", :value password}
+                 [{:name "KEYCLOAK_USER", :value user-name}
+                  {:name "KEYCLOAK_PASSWORD", :value user-password}
                   {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
                  :ports [{:name "http", :containerPort 8080}]
                  :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]))))
@@ -78,10 +77,10 @@
   (cs/join "\n" 
            [(yaml/to-string (generate-config my-config my-auth))
             "---"
-            (yaml/to-string (generate-certificate))
+            (yaml/to-string (generate-certificate my-config))
             "---"
-            (yaml/to-string (generate-ingress))
+            (yaml/to-string (generate-ingress my-config))
             "---"
             (yaml/to-string (generate-service))
             "---"
-            (yaml/to-string (generate-deployment))]))
+            (yaml/to-string (generate-deployment my-auth))]))

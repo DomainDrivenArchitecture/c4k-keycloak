@@ -81,4 +81,4 @@
                    {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
                  :ports [{:name "http", :containerPort 8080}]
                  :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
-         (cut/generate-deployment {:user "testuser" :password "test1234"}))))
+         (cut/generate-deployment {:user-name "testuser" :user-password "test1234"}))))

@@ -1,2 +1,1 @@
-{:fqdn "test.de"
- :issuer :prod}
+{:fqdn "keycloak.test.meissa-gmbh.de"}

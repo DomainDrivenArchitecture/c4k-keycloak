@@ -46,7 +46,7 @@
                   config-valid? (s/valid? core/config? config-edn)
                   auth-valid? (s/valid? core/auth? auth-edn)]
               (if (and config-valid? auth-valid?)
-                (println (core/generate config-str auth-str))
+                (println (core/generate config-edn auth-edn))
                 (do
                   (when (not config-valid?) 
                     (println 
