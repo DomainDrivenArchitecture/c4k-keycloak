@@ -27,8 +27,8 @@
              :nginx.ingress.kubernetes.io/proxy-read-timeout "300"}
             :namespace "default"}
            :spec
-           {:tls ({:hosts ("test.de"), :secretName "keycloak-secret"})
-            :rules ({:host "test.de", :http {:paths ({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
+           {:tls '({:hosts ["test.de"] :secretName "keycloak-secret"})
+            :rules '({:host "test.de", :http {:paths '({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
           (cut/generate-ingress {:fqdn "test.de"}))))
 
 (deftest should-generate-ingress-yaml-with-prod-issuer
@@ -46,7 +46,7 @@
             :nginx.ingress.kubernetes.io/proxy-read-timeout "300"}
            :namespace "default"}
           :spec
-          {:tls ({:hosts ("test.de"), :secretName "keycloak-secret"})
-           :rules ({:host "test.de", :http {:paths ({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
+          {:tls [{:hosts ["test.de"], :secretName "keycloak-secret"}]
+           :rules '({:host "test.de", :http {:paths '({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
          (cut/generate-ingress {:fqdn "test.de"
                                 :issuer :prod}))))
