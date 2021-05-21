@@ -61,3 +61,24 @@
            :rules '({:host "test.de", :http {:paths [{:backend {:serviceName "keycloak", :servicePort 8080}}]}})}}
          (cut/generate-ingress {:fqdn "test.de"
                                 :issuer :prod}))))
+
+(deftest should-generate-deployment
+  (is (= {{:apiVersion "apps/v1"
+           :kind "Deployment"
+           :metadata {:name "keycloak", :namespace "default", :labels {:app "keycloak"}}
+           :spec
+           {:replicas 1
+            :selector {:matchLabels {:app "keycloak"}}
+            :template
+            {:metadata {:labels {:app "keycloak"}}
+             :spec
+             {:containers
+              [({:name "keycloak"
+                 :image "quay.io/keycloak/keycloak:13.0.0"
+                 :env
+                 ({:name "KEYCLOAK_USER", :value "admin"}
+                  {:name "KEYCLOAK_PASSWORD", :value "admin"}
+                  {:name "PROXY_ADDRESS_FORWARDING", :value "true"})
+                 :ports ({:name "http", :containerPort 8080})
+                 :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}})]}}}}}
+         (cut/generate-deployment))))
