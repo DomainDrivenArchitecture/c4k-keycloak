@@ -26,7 +26,7 @@ stages:
   before_script:
     - echo "{:auth {:repository-auth {#\"clojars\" {:username \"${CLOJARS_USER}\" :password \"${CLOJARS_PASSWORD}\" }}}}" > ~/.lein/profiles.clj
 
-test-cljs:
+.test-cljs:
   <<: *cljs
   stage: build_and_test
   script:
@@ -38,7 +38,7 @@ test-clj:
   script:
     - lein test
 
-report-frontend:
+.report-frontend:
   <<: *cljs
   stage: package
   script:
@@ -48,7 +48,7 @@ report-frontend:
     paths:
       - target/frontend-build/build-report.html
 
-package-frontend:
+.package-frontend:
   <<: *cljs
   stage: package
   script:
