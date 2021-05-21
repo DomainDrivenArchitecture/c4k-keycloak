@@ -25,9 +25,12 @@
          :or {issuer :staging}} config
         letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
     (->
-      (yaml/from-string (yaml/load-resource "ingress.yaml"))
-      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer))))
-
+     (yaml/from-string (yaml/load-resource "ingress.yaml"))
+     (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
+     (assoc-in [:spec :tls] [{:hosts [fqdn], :secretName "keycloak-secret"}])
+     (assoc-in [:spec :rules] [{:host fqdn
+                                :http {:paths [{:backend {:serviceName "keycloak"
+                                                          :servicePort 8080}}]}}]))))
 (defn-spec generate any?
   [my-config string?
    my-auth string?] 
