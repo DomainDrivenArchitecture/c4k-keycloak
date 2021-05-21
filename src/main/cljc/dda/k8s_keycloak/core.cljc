@@ -25,7 +25,10 @@
          :or {issuer :staging}} config
         letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
   (->
-   (yaml/from-string (yaml/load-resource "certificate.yaml")))))
+   (yaml/from-string (yaml/load-resource "certificate.yaml"))
+   (assoc-in [:spec :commonName] fqdn)
+   (assoc-in [:spec :dnsNames] [fqdn])
+   (assoc-in [:spec :issuerRef :name] letsencrypt-issuer))))
 
 (defn generate-ingress [config]
   (let [{:keys [fqdn issuer]
