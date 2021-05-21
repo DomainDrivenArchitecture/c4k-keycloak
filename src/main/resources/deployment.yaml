@@ -1,35 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: keycloak
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s-keycloak
+  name: keycloak
+  namespace: default
+  labels:
+    app: keycloak
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: k8s-keycloak
-  strategy:
-    type: Recreate
+      app: keycloak
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: k8s-keycloak
+        app: keycloak
     spec:
-      volumes:
-        - name: config-volume
-          configMap:
-            name: keycloak
       containers:
-        - image: domaindrivenarchitecture/keycloak
-          name: keycloak
-          env:
-            - name: MASTODON_BOT_CREDENTIALS
-              value: /credentials.edn
-          volumeMounts:
-            - name: config-volume
-              mountPath: /config.edn
-              subPath: config.edn
-              readOnly: true
-            - name: config-volume
-              mountPath: /credentials.edn
-              subPath: credentials.edn
-              readOnly: true
-      
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:13.0.0
+        env:
+        - name: KEYCLOAK_USER
+          value: "admin"
+        - name: KEYCLOAK_PASSWORD
+          value: "admin"
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "true"
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /auth/realms/master
+            port: 8080
