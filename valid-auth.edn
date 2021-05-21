@@ -1,1 +1,2 @@
-{}
+{:user-name "testuser"
+ :user-password "test1234"}

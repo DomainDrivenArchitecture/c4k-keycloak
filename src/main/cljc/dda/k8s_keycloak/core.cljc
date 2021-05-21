@@ -19,12 +19,12 @@
 (s/def ::user-name bash-env-string?)
 (s/def ::user-password string?)
 (s/def ::fqdn fqdn-string?)
+(s/def ::issuer #{:prod :staging})
 
-(def config? (s/keys :req-un [::user-name ::user-password ::fqdn]
+(def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? any?)
-(def config? config?)
+(def auth? (s/keys :req-un [::user-name ::user-password]))
 
 (defn generate-config [my-config my-auth]
   (->
@@ -73,12 +73,12 @@
   (yaml/from-string (yaml/load-resource "service.yaml")))
 
 (defn-spec generate any?
-  [my-config string?
-   my-auth string?] 
+  [my-config config?
+   my-auth auth?] 
   (cs/join "\n" 
            [(yaml/to-string (generate-config my-config my-auth))
             "---"
-            (yaml/to-string (generate-config))
+            (yaml/to-string (generate-certificate))
             "---"
             (yaml/to-string (generate-ingress))
             "---"
