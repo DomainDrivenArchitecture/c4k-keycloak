@@ -20,8 +20,8 @@
 (defn generate-deployment []
   (yaml/from-string (yaml/load-resource "deployment.yaml")))
 
-(defn generate-cron []
-  (yaml/from-string (yaml/load-resource "cron.yaml")))
+(defn generate-ingress [fqdn string?]
+  (yaml/from-string (yaml/load-resource "ingress.yaml")))
 
 (defn-spec generate any?
   [my-config string?
@@ -29,4 +29,6 @@
   (cs/join "\n" 
            [(yaml/to-string (generate-config my-config my-auth))
             "---"
-            (yaml/to-string (generate-cron))]))
+            (yaml/to-string (generate-ingress))
+            "---"
+            (yaml/to-string (generate-deployment))]))

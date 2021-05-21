@@ -1,17 +1,3 @@
-apiVersion: cert-manager.io/v1alpha2
-kind: Certificate
-metadata:
-  name: keycloak-cert
-  namespace: default
-spec:
-  secretName: keycloak-secret
-  commonName: fqdn
-  dnsNames:
-  - fqdn
-  issuerRef:
-    name: letsencrypt-staging-issuer
-    kind: ClusterIssuer
----
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
