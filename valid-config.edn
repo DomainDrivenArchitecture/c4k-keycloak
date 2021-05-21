@@ -1,1 +1,4 @@
-{}
+{:fqdn "test.de"
+ :user-name "testuser"
+ :user-password "test1234"
+ :issuer :prod}

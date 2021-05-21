@@ -63,7 +63,7 @@
                                 :issuer :prod}))))
 
 (deftest should-generate-deployment
-  (is (= {{:apiVersion "apps/v1"
+  (is (= {:apiVersion "apps/v1"
            :kind "Deployment"
            :metadata {:name "keycloak", :namespace "default", :labels {:app "keycloak"}}
            :spec
@@ -73,12 +73,12 @@
             {:metadata {:labels {:app "keycloak"}}
              :spec
              {:containers
-              [({:name "keycloak"
+              [{:name "keycloak"
                  :image "quay.io/keycloak/keycloak:13.0.0"
                  :env
-                 ({:name "KEYCLOAK_USER", :value "admin"}
-                  {:name "KEYCLOAK_PASSWORD", :value "admin"}
-                  {:name "PROXY_ADDRESS_FORWARDING", :value "true"})
-                 :ports ({:name "http", :containerPort 8080})
-                 :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}})]}}}}}
-         (cut/generate-deployment))))
+                 [{:name "KEYCLOAK_USER", :value "testuser"}
+                   {:name "KEYCLOAK_PASSWORD", :value "test1234"}
+                   {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
+                 :ports [{:name "http", :containerPort 8080}]
+                 :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
+         (cut/generate-deployment {:user "testuser" :password "test1234"}))))
