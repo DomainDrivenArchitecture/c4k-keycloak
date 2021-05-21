@@ -12,6 +12,17 @@
                   :credentials.edn "some-credentials-value\n"}}
           (cut/generate-config "some-config-value\n" "some-credentials-value\n"))))
 
+(deftest should-generate-certificate
+  (is (= {:apiVersion "cert-manager.io/v1alpha2"
+          :kind "Certificate"
+          :metadata {:name "keycloak-cert", :namespace "default"}
+          :spec
+          {:secretName "keycloak-secret"
+           :commonName "test.de"
+           :dnsNames ["test.de"]
+           :issuerRef {:name "letsencrypt-prod-issuer", :kind "ClusterIssuer"}}}
+         (cut/generate-certificate {:fqdn "test.de" :issuer :prod} ))))
+
 (deftest should-generate-ingress-yaml-with-default-issuer
   (is (= {:apiVersion "networking.k8s.io/v1beta1"
            :kind "Ingress"
@@ -27,8 +38,8 @@
              :nginx.ingress.kubernetes.io/proxy-read-timeout "300"}
             :namespace "default"}
            :spec
-           {:tls '({:hosts ["test.de"] :secretName "keycloak-secret"})
-            :rules '({:host "test.de", :http {:paths '({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
+           {:tls [{:hosts ["test.de"] :secretName "keycloak-secret"}]
+            :rules [{:host "test.de", :http {:paths [{:backend {:serviceName "keycloak", :servicePort 8080}}]}}]}}
           (cut/generate-ingress {:fqdn "test.de"}))))
 
 (deftest should-generate-ingress-yaml-with-prod-issuer
@@ -47,6 +58,6 @@
            :namespace "default"}
           :spec
           {:tls [{:hosts ["test.de"], :secretName "keycloak-secret"}]
-           :rules '({:host "test.de", :http {:paths '({:backend {:serviceName "keycloak", :servicePort 8080}})}})}}
+           :rules '({:host "test.de", :http {:paths [{:backend {:serviceName "keycloak", :servicePort 8080}}]}})}}
          (cut/generate-ingress {:fqdn "test.de"
                                 :issuer :prod}))))

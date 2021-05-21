@@ -20,6 +20,13 @@
 (defn generate-deployment []
   (yaml/from-string (yaml/load-resource "deployment.yaml")))
 
+(defn generate-certificate [config]
+  (let [{:keys [fqdn issuer]
+         :or {issuer :staging}} config
+        letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
+  (->
+   (yaml/from-string (yaml/load-resource "certificate.yaml"))))
+
 (defn generate-ingress [config]
   (let [{:keys [fqdn issuer]
          :or {issuer :staging}} config
