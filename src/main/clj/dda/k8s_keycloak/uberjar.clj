@@ -39,8 +39,8 @@
             (some #(= "-h" %) options)
             (println usage)
             :default
-            (let [config-str (slurp (:config args))
-                  auth-str (slurp (:auth args))
+            (let [config-str (slurp config)
+                  auth-str (slurp auth)
                   config-edn (edn/read-string config-str)
                   auth-edn (edn/read-string auth-str)
                   config-valid? (s/valid? core/config? config-edn)

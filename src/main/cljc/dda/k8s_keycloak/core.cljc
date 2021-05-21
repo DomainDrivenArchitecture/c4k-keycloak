@@ -4,12 +4,11 @@
    [clojure.spec.alpha :as s]
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
-   [keycloak.core-domain :as cd]
    [dda.k8s-keycloak.yaml :as yaml]))
 
-(def config? cd/config?)
+(def config? any?)
 
-(def auth? (s/keys :req-un [::cd/auth]))
+(def auth? any?)
 
 (defn generate-config [my-config my-auth]
   (->
