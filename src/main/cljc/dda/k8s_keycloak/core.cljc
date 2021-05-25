@@ -26,6 +26,11 @@
 
 (def auth? (s/keys :req-un [::user-name ::user-password]))
 
+
+(defn replace-values-in-vector
+  [map keys value]
+)
+
 (defn generate-config [my-config my-auth]
   (->
    (yaml/from-string (yaml/load-resource "config.yaml"))
@@ -68,6 +73,8 @@
                                 :http {:paths [{:backend {:serviceName "keycloak"
                                                           :servicePort 8080}}]}}]))))
 
+
+
 (defn generate-service []
   (yaml/from-string (yaml/load-resource "service.yaml")))
 
@@ -84,3 +91,5 @@
             (yaml/to-string (generate-service))
             "---"
             (yaml/to-string (generate-deployment my-auth))]))
+
+

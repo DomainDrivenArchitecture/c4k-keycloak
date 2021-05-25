@@ -2,7 +2,8 @@
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
-   [dda.k8s-keycloak.core :as cut]))
+   [dda.k8s-keycloak.core :as cut]
+   [dda.k8s-keycloak.yaml :as yaml]))
 
 (deftest should-generate-yaml
   (is (=  {:apiVersion "v1", :kind "ConfigMap"
@@ -82,3 +83,18 @@
                  :ports [{:name "http", :containerPort 8080}]
                  :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
          (cut/generate-deployment {:user-name "testuser" :user-password "test1234"}))))
+
+(deftest test-vector-replace-fqdn-function
+  (let [ingress-yaml (yaml/from-string (yaml/load-resource "ingress.yaml"))
+        fqdn "some_host"
+        desired-result (-> ingress-yaml 
+                           (assoc-in [:spec :rules] [{:host fqdn
+                                                      :http {:paths [{:backend {:serviceName "keycloak"
+                                                                                :servicePort 8080}}]}}
+                                                     {:host fqdn
+                                                      :http {:paths [{:backend {:serviceName "another_keycloak"
+                                                                                :servicePort 8081}}]}}]))]
+    (is (= desired-result (cut/replace-values-in-vector ingress-yaml [:spec :rules :host] fqdn))))
+    )
+
+
