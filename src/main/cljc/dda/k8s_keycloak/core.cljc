@@ -27,7 +27,7 @@
 (def auth? (s/keys :req-un [::user-name ::user-password]))
 
 
-(defn replace-values-in-vector
+(defn replace-values-in-map
   [map keys value]
 )
 

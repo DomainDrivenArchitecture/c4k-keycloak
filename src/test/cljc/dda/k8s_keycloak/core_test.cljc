@@ -94,7 +94,7 @@
                                                      {:host fqdn
                                                       :http {:paths [{:backend {:serviceName "another_keycloak"
                                                                                 :servicePort 8081}}]}}]))]
-    (is (= desired-result (cut/replace-values-in-vector ingress-yaml [:spec :rules :host] fqdn))))
+    (is (= desired-result (cut/replace-values-in-map ingress-yaml [:spec :rules :host] fqdn))))
     )
 
 
