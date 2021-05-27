@@ -26,16 +26,37 @@
 
 (def auth? (s/keys :req-un [::user-name ::user-password]))
 
+(declare assoc-in-nested)
+(declare assoc-in-nested-seq)
+(declare assoc-in-nested-map)
 
-(defn replace-values-in-map
-  [map keys value]
-)
+(defn assoc-in-nested-seq [s path n]
+  (map #(if (sequential? %)
+          (assoc-in-nested-seq % path n)
+          (assoc-in-nested-map % path n)) s))
+
+(defn assoc-in-nested-map [m path n]
+  (into (empty m)
+        (let [p1 (first path)]
+          (for [[k v] m]
+            (if (= k p1)
+              [k (assoc-in-nested v (rest path) n)]
+              [k (assoc-in-nested v path n)])))))
+
+(defn assoc-in-nested [data path n]
+  (if (empty? path)
+    n
+    (if (sequential? data)
+      (assoc-in-nested-seq data path n)
+      (if (map? data)
+        (assoc-in-nested-map data path n)
+        data))))
 
 (defn generate-config [my-config my-auth]
   (->
    (yaml/from-string (yaml/load-resource "config.yaml"))
    (assoc-in [:data :config.edn] (str my-config))
-   (assoc-in [ :data :credentials.edn] (str my-auth))))
+   (assoc-in [:data :credentials.edn] (str my-auth))))
 
 (defn generate-deployment [my-auth]
   (let [{:keys [user-name user-password]} my-auth]
@@ -55,11 +76,11 @@
   (let [{:keys [fqdn issuer]
          :or {issuer :staging}} config
         letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
-  (->
-   (yaml/from-string (yaml/load-resource "certificate.yaml"))
-   (assoc-in [:spec :commonName] fqdn)
-   (assoc-in [:spec :dnsNames] [fqdn])
-   (assoc-in [:spec :issuerRef :name] letsencrypt-issuer))))
+    (->
+     (yaml/from-string (yaml/load-resource "certificate.yaml"))
+     (assoc-in [:spec :commonName] fqdn)
+     (assoc-in [:spec :dnsNames] [fqdn])
+     (assoc-in [:spec :issuerRef :name] letsencrypt-issuer))))
 
 (defn generate-ingress [config]
   (let [{:keys [fqdn issuer]
@@ -80,8 +101,8 @@
 
 (defn-spec generate any?
   [my-config config?
-   my-auth auth?] 
-  (cs/join "\n" 
+   my-auth auth?]
+  (cs/join "\n"
            [(yaml/to-string (generate-config my-config my-auth))
             "---"
             (yaml/to-string (generate-certificate my-config))

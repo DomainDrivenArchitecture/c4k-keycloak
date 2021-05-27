@@ -87,14 +87,15 @@
 (deftest test-vector-replace-fqdn-function
   (let [ingress-yaml (yaml/from-string (yaml/load-resource "ingress.yaml"))
         fqdn "some_host"
-        desired-result (-> ingress-yaml 
+        desired-result (-> ingress-yaml
                            (assoc-in [:spec :rules] [{:host fqdn
                                                       :http {:paths [{:backend {:serviceName "keycloak"
                                                                                 :servicePort 8080}}]}}
                                                      {:host fqdn
                                                       :http {:paths [{:backend {:serviceName "another_keycloak"
-                                                                                :servicePort 8081}}]}}]))]
-    (is (= desired-result (cut/replace-values-in-map ingress-yaml [:spec :rules :host] fqdn))))
+                                                                                :servicePort 8081}}]}}
+                                                     ]))]
+    (is (= desired-result (cut/assoc-in-nested ingress-yaml [:spec :rules :host] fqdn))))
     )
 
 
