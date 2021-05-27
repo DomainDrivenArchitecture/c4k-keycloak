@@ -27,6 +27,8 @@
 
 (def auth? (s/keys :req-un [::user-name ::user-password]))
 
+; This needs to be checked: 
+; Are LazySeq only lists on our case?
 (defn cast-lazy-seq-to-vec
   [lazy-seq]
   (clojure.walk/postwalk #(if (instance? clojure.lang.LazySeq %)
