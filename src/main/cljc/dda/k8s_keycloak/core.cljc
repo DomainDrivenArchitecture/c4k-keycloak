@@ -32,11 +32,11 @@
 (defn cast-lazy-seq-to-vec
   [lazy-seq]
   (clojure.walk/postwalk #(if (instance? clojure.lang.LazySeq %)
-                            (do (println %) (into [] %))
+                            (do (into [] %))
                             %) lazy-seq))
 
 (defn replace-all-matching-values-by-new-value
-  [value-to-match value-to-replace coll]
+  [coll value-to-match value-to-replace]
   (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %)) 
                                    (= value-to-match %))
                             value-to-replace
@@ -78,6 +78,7 @@
   (let [{:keys [user-name user-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
+     (cast-lazy-seq-to-vec)
      (assoc-in [:spec :template :spec :containers 0 :env 0 :value] user-name)
      (assoc-in [:spec :template :spec :containers 0 :env 1 :value] user-password))))
 
@@ -98,10 +99,7 @@
     (->
      (yaml/from-string (yaml/load-resource "ingress.yaml"))
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
-     (assoc-in [:spec :tls] [{:hosts [fqdn], :secretName "keycloak-secret"}])
-     (assoc-in [:spec :rules] [{:host fqdn
-                                :http {:paths [{:backend {:serviceName "keycloak"
-                                                          :servicePort 8080}}]}}]))))
+     (replace-all-matching-values-by-new-value "fqdn" fqdn))))
 
 
 
