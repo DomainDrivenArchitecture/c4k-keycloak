@@ -40,12 +40,23 @@
    (assoc-in [:data :config.edn] (str my-config))
    (assoc-in [:data :credentials.edn] (str my-auth))))
 
+(defn generate-postgres-config []
+   (yaml/from-string (yaml/load-resource "postgres/postgres-config.yaml")))
+
 (defn generate-deployment [my-auth]
   (let [{:keys [user-name user-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
      (assoc-in [:spec :template :spec :containers 0 :env 0 :value] user-name)
      (assoc-in [:spec :template :spec :containers 0 :env 1 :value] user-password))))
+
+(defn generate-postgres-deployment [my-auth]
+  (let [{:keys [postgres-user postgres-password postgres-db]} my-auth]
+    (->
+     (yaml/from-string (yaml/load-resource "postgres/postgres-deployment.yaml"))
+     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] postgres-user)
+     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] postgres-db)
+     (assoc-in [:spec :template :spec :containers 0 :env 2 :value] postgres-password))))
 
 (defn generate-certificate [config]
   (let [{:keys [fqdn issuer]
@@ -69,11 +80,20 @@
 (defn generate-service []
   (yaml/from-string (yaml/load-resource "service.yaml")))
 
+(defn generate-postgres-service []
+  (yaml/from-string (yaml/load-resource "postgres/postgres-service.yaml")))
+
 (defn-spec generate any?
   [my-config config?
    my-auth auth?]
   (cs/join "\n"
-           [(yaml/to-string (generate-config my-config my-auth))
+           [(yaml/to-string (generate-postgres-config))
+            "---"
+            (yaml/to-string (generate-postgres-service))
+            "---"
+            (yaml/to-string (generate-postgres-deployment my-auth))
+            "---"
+            (yaml/to-string (generate-config my-config my-auth))
             "---"
             (yaml/to-string (generate-certificate my-config))
             "---"
