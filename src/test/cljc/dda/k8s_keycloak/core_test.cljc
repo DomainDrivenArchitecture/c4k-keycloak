@@ -83,3 +83,23 @@
                :ports [{:name "http", :containerPort 8080}]
                :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
          (cut/generate-deployment {:user-name "testuser" :user-password "test1234"}))))
+<<<<<<< HEAD
+=======
+
+(deftest test-vector-replace-fqdn-function
+  (let [ingress-yaml (yaml/from-string (yaml/load-resource "ingress.yaml"))
+        fqdn "some_host"
+        desired-result (-> ingress-yaml
+                           (assoc-in [:spec :rules] [{:host fqdn
+                                                      :http {:paths [{:backend {:serviceName "keycloak"
+                                                                                :servicePort 8080}}]}}
+                                                     {:host fqdn
+                                                      :http {:paths [{:backend {:serviceName "another_keycloak"
+                                                                                :servicePort 8081}}]}}
+                                                     ]))]
+    (is (= desired-result 
+           (cut/assoc-in-nested (cut/cast-lazy-seq-to-vec ingress-yaml) [:spec :rules :host] fqdn))))
+    )
+
+
+>>>>>>> 0379ad882851993440561c5c09c9f813e4357ab1
