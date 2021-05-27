@@ -62,15 +62,8 @@
   (let [{:keys [user-name user-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers]
-               [{:name "keycloak"
-                 :image "quay.io/keycloak/keycloak:13.0.0"
-                 :env
-                 [{:name "KEYCLOAK_USER", :value user-name}
-                  {:name "KEYCLOAK_PASSWORD", :value user-password}
-                  {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
-                 :ports [{:name "http", :containerPort 8080}]
-                 :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]))))
+     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] user-name)
+     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] user-password))))
 
 (defn generate-certificate [config]
   (let [{:keys [fqdn issuer]
