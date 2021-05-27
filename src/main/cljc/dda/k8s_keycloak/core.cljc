@@ -27,46 +27,12 @@
 
 (def auth? (s/keys :req-un [::user-name ::user-password]))
 
-; This needs to be checked: 
-; Are LazySeq only lists on our case?
-(defn cast-lazy-seq-to-vec
-  [lazy-seq]
-  (clojure.walk/postwalk #(if (instance? clojure.lang.LazySeq %)
-                            (do (into [] %))
-                            %) lazy-seq))
-
 (defn replace-all-matching-values-by-new-value
   [coll value-to-match value-to-replace]
   (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %)) 
                                    (= value-to-match %))
                             value-to-replace
                             %) coll))
-
-(declare assoc-in-nested)
-(declare assoc-in-nested-seq)
-(declare assoc-in-nested-map)
-
-(defn assoc-in-nested-seq [s path n]
-  (map #(if (sequential? %)
-          (assoc-in-nested-seq % path n)
-          (assoc-in-nested-map % path n)) s))
-
-(defn assoc-in-nested-map [m path n]
-  (into (empty m)
-        (let [p1 (first path)]
-          (for [[k v] m]
-            (if (= k p1)
-              [k (assoc-in-nested v (rest path) n)]
-              [k (assoc-in-nested v path n)])))))
-
-(defn assoc-in-nested [data path n]
-  (if (empty? path)
-    n
-    (if (sequential? data)
-      (assoc-in-nested-seq data path n)
-      (if (map? data)
-        (assoc-in-nested-map data path n)
-        data))))
 
 (defn generate-config [my-config my-auth]
   (->
@@ -78,7 +44,6 @@
   (let [{:keys [user-name user-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
-     (cast-lazy-seq-to-vec)
      (assoc-in [:spec :template :spec :containers 0 :env 0 :value] user-name)
      (assoc-in [:spec :template :spec :containers 0 :env 1 :value] user-password))))
 
@@ -101,8 +66,6 @@
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
      (replace-all-matching-values-by-new-value "fqdn" fqdn))))
 
-
-
 (defn generate-service []
   (yaml/from-string (yaml/load-resource "service.yaml")))
 
@@ -119,5 +82,3 @@
             (yaml/to-string (generate-service))
             "---"
             (yaml/to-string (generate-deployment my-auth))]))
-
-
