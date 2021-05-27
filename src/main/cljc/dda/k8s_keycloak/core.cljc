@@ -4,7 +4,8 @@
    [clojure.spec.alpha :as s]
    #?(:clj [orchestra.core :refer [defn-spec]]
       :cljs [orchestra.core :refer-macros [defn-spec]])
-   [dda.k8s-keycloak.yaml :as yaml]))
+   [dda.k8s-keycloak.yaml :as yaml]
+   [clojure.walk]))
 
 (defn bash-env-string?
   [input]
@@ -25,6 +26,19 @@
                      :opt-un [::issuer]))
 
 (def auth? (s/keys :req-un [::user-name ::user-password]))
+
+(defn cast-lazy-seq-to-vec
+  [lazy-seq]
+  (clojure.walk/postwalk #(if (instance? clojure.lang.LazySeq %)
+                            (do (println %) (into [] %))
+                            %) lazy-seq))
+
+(defn replace-all-matching-values-by-new-value
+  [value-to-match value-to-replace coll]
+  (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %)) 
+                                   (= value-to-match %))
+                            value-to-replace
+                            %) coll))
 
 (declare assoc-in-nested)
 (declare assoc-in-nested-seq)
