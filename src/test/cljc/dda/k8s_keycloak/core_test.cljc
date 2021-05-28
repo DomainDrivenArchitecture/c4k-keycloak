@@ -2,8 +2,7 @@
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
-   [dda.k8s-keycloak.core :as cut]
-   [dda.k8s-keycloak.yaml :as yaml]))
+   [dda.k8s-keycloak.core :as cut]))
 
 (deftest should-generate-yaml
   (is (=  {:apiVersion "v1", :kind "ConfigMap"

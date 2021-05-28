@@ -21,7 +21,7 @@
 
 (defn generate-config [my-config my-auth]
   (->
-   (yaml/from-string (yaml/load-resource "config.yaml"))
+   (yaml/from-string (yaml/load-resource "keycloak/config.yaml"))
    (assoc-in [:data :config.edn] (str my-config))
    (assoc-in [:data :credentials.edn] (str my-auth))))
 
