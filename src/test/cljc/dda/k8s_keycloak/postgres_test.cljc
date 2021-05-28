@@ -24,7 +24,6 @@
                    {:name "postgres-config", :key "postgres-db"}}}
                 {:name "POSTGRES_PASSWORD", :value "test1234"}]
                :ports [{:containerPort 5432, :name "postgresql"}]
-               :cmd nil
                :volumeMounts
                [{:name "postgres-config-volume"
                  :mountPath "/etc/postgresql/postgresql.conf"
