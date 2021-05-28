@@ -30,9 +30,16 @@
 (def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password
                             ::postgres-db-user ::postgres-db-password]))
 
+(defn replace-named-value
+  [coll name value]
+  (clojure.walk/postwalk #(if (and (map? %)
+                                   (= name (:name %)))
+                            {:name name :value value}
+                            %) coll))
+
 (defn replace-all-matching-values-by-new-value
   [coll value-to-match value-to-replace]
-  (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %)) 
+  (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %))
                                    (= value-to-match %))
                             value-to-replace
                             %) coll))
@@ -51,17 +58,17 @@
                 keycloak-admin-user keycloak-admin-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers 0 :env 3 :value] postgres-db-user)
-     (assoc-in [:spec :template :spec :containers 0 :env 5 :value] postgres-db-password)
-     (assoc-in [:spec :template :spec :containers 0 :env 6 :value] keycloak-admin-user)
-     (assoc-in [:spec :template :spec :containers 0 :env 7 :value] keycloak-admin-password))))
+     (replace-named-value "KEYCLOAK_USER" keycloak-admin-user)
+     (replace-named-value "DB_USER" postgres-db-user)
+     (replace-named-value "DB_PASSWORD" postgres-db-password)
+     (replace-named-value "KEYCLOAK_PASSWORD" keycloak-admin-password))))
 
 (defn generate-postgres-deployment [my-auth]
   (let [{:keys [postgres-db-user postgres-db-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "postgres/postgres-deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] postgres-db-user)
-     (assoc-in [:spec :template :spec :containers 0 :env 2 :value] postgres-db-password))))
+     (replace-named-value "POSTGRES_USER" postgres-db-user)
+     (replace-named-value "POSTGRES_PASSWORD" postgres-db-password))))
 
 (defn generate-certificate [config]
   (let [{:keys [fqdn issuer]

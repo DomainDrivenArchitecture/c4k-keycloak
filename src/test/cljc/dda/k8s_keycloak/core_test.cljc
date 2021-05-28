@@ -77,12 +77,19 @@
              [{:name "keycloak"
                :image "quay.io/keycloak/keycloak:13.0.0"
                :env
-               [{:name "KEYCLOAK_USER", :value "testuser"}
+               [{:name "DB_VENDOR", :value "POSTGRES"}
+                {:name "DB_ADDR", :value "postgresql-service"}
+                {:name "DB_DATABASE", :value "keycloak"}
+                {:name "DB_USER", :value "db-user"}
+                {:name "DB_SCHEMA", :value "public"}
+                {:name "DB_PASSWORD", :value "db-password"}
+                {:name "KEYCLOAK_USER", :value "testuser"}
                 {:name "KEYCLOAK_PASSWORD", :value "test1234"}
                 {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
                :ports [{:name "http", :containerPort 8080}]
                :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
-         (cut/generate-deployment {:user-name "testuser" :user-password "test1234"}))))
+         (cut/generate-deployment {:keycloak-admin-user "testuser" :keycloak-admin-password "test1234"
+                                   :postgres-db-user "db-user" :postgres-db-password "db-password"}))))
 
 (deftest should-generate-postgres-deployment
   (is (= {:apiVersion "apps/v1"
@@ -109,4 +116,4 @@
                  :subPath "postgresql.conf"
                  :readOnly true}]}]
              :volumes [{:name "postgres-config-volume", :configMap {:name "postgres-config"}}]}}}}
-    (cut/generate-postgres-deployment {:postgres-user "psqluser" :postgres-db "keycloak" :postgres-password "test1234"}))))
+    (cut/generate-postgres-deployment {:postgres-db-user "psqluser" :postgres-db-password "test1234"}))))
