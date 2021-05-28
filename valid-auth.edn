@@ -1,2 +1,4 @@
-{:user-name "testuser"
- :user-password "test1234"}
+{:keycloak-admin-user "testuser"
+ :keycloak-admin-password "testpassword"
+ :postgres-db-user "keycloakuser"
+ :postgres-db-password "testdbpassword"}
