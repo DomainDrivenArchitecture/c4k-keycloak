@@ -19,7 +19,9 @@
                :name "postgresql"
                :env
                [{:name "POSTGRES_USER", :value "psqluser"}
-                {:name "POSTGRES_DB", :value "keycloak"}
+                {:name "POSTGRES_DB", :valueFrom
+                  {:configMapKeyRef
+                   {:name "postgres-config", :key "postgres-db"}}}
                 {:name "POSTGRES_PASSWORD", :value "test1234"}]
                :ports [{:containerPort 5432, :name "postgresql"}]
                :cmd nil

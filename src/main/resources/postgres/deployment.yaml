@@ -20,13 +20,15 @@ spec:
             - name: POSTGRES_USER
               value: "psql-user"
             - name: POSTGRES_DB
-              value: "keycloak"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres-db
             - name: POSTGRES_PASSWORD
               value: "psql-pw"
           ports:
             - containerPort: 5432
               name: postgresql
-          cmd:
           volumeMounts:
             - name: postgres-config-volume
               mountPath: /etc/postgresql/postgresql.conf
