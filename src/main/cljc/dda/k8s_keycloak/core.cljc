@@ -63,9 +63,11 @@
   (cs/join "\n"
            [(yaml/to-string (pg/generate-config))
             "---"
+            (yaml/to-string (pg/generate-secret my-auth))
+            "---"
             (yaml/to-string (pg/generate-service))
             "---"
-            (yaml/to-string (pg/generate-deployment my-auth))
+            (yaml/to-string (pg/generate-deployment))
             "---"
             (yaml/to-string (generate-config my-config my-auth))
             "---"

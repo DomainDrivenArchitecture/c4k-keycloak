@@ -21,11 +21,21 @@
   (clojure.walk/postwalk #(if (and (map? %)
                                    (= name (:name %)))
                             {:name name :value value}
-                            %) coll))
+                            %) 
+                         coll))
+
+(defn replace-key-value
+  [coll key value]
+  (clojure.walk/postwalk #(if (and (map? %)
+                                   (contains? % key))
+                            (assoc % key value)
+                            %)
+                         coll))
 
 (defn replace-all-matching-values-by-new-value
   [coll value-to-match value-to-replace]
   (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %))
                                    (= value-to-match %))
                             value-to-replace
-                            %) coll))
+                            %) 
+                         coll))
