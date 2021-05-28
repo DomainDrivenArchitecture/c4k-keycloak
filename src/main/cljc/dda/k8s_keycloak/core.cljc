@@ -18,15 +18,17 @@
        (not (nil? (re-matches #"(?=^.{4,253}\.?$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}\.?$)" input)))))
 
 (s/def ::keycloak-admin-user bash-env-string?)
-(s/def ::keycloak-admin-password string?)
+(s/def ::keycloak-admin-password bash-env-string?)
 (s/def ::postgres-db-user bash-env-string?)
+(s/def ::postgres-db-password bash-env-string?)
 (s/def ::fqdn fqdn-string?)
 (s/def ::issuer #{:prod :staging})
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password]))
+(def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password
+                            ::postgres-db-user ::postgres-db-password]))
 
 (defn replace-all-matching-values-by-new-value
   [coll value-to-match value-to-replace]
@@ -45,19 +47,21 @@
    (yaml/from-string (yaml/load-resource "postgres/postgres-config.yaml")))
 
 (defn generate-deployment [my-auth]
-  (let [{:keys [keycloak-admin-user keycloak-admin-password]} my-auth]
+  (let [{:keys [postgres-db-user postgres-db-password
+                keycloak-admin-user keycloak-admin-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] keycloak-admin-user)
-     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] keycloak-admin-password))))
+     (assoc-in [:spec :template :spec :containers 0 :env 3 :value] postgres-db-user)
+     (assoc-in [:spec :template :spec :containers 0 :env 5 :value] postgres-db-password)
+     (assoc-in [:spec :template :spec :containers 0 :env 6 :value] keycloak-admin-user)
+     (assoc-in [:spec :template :spec :containers 0 :env 7 :value] keycloak-admin-password))))
 
 (defn generate-postgres-deployment [my-auth]
-  (let [{:keys [postgres-user postgres-password postgres-db]} my-auth]
+  (let [{:keys [postgres-db-user postgres-db-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "postgres/postgres-deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] postgres-user)
-     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] postgres-db)
-     (assoc-in [:spec :template :spec :containers 0 :env 2 :value] postgres-password))))
+     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] postgres-db-user)
+     (assoc-in [:spec :template :spec :containers 0 :env 2 :value] postgres-db-password))))
 
 (defn generate-certificate [config]
   (let [{:keys [fqdn issuer]
