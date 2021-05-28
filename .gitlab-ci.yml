@@ -1,5 +1,4 @@
 stages:
-  - first
   - build_and_test
   - package
   - security
@@ -18,7 +17,7 @@ stages:
     - npm install
 
 .clj-uploadjob: &clj
-  image: clojure:lein-2.7.1-alpine
+  image: domaindrivenarchitecture/lein
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -37,6 +36,17 @@ test-clj:
   stage: build_and_test
   script:
     - lein test
+
+test-schema:
+  <<: *clj
+  stage: build_and_test
+  script:
+    - lein uberjar
+    - java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
+  artifacts:
+    paths:
+      - target/uberjar
+
 
 .report-frontend:
   <<: *cljs
@@ -65,7 +75,6 @@ package-uberjar:
   <<: *clj
   stage: package
   script:
-    - lein uberjar
     - sha256sum target/uberjar/k8s-keycloak-standalone.jar > target/uberjar/k8s-keycloak-standalone.jar.sha256
     - sha512sum target/uberjar/k8s-keycloak-standalone.jar > target/uberjar/k8s-keycloak-standalone.jar.sha512
   artifacts:
