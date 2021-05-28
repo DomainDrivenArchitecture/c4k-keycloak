@@ -90,30 +90,3 @@
                :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
          (cut/generate-deployment {:keycloak-admin-user "testuser" :keycloak-admin-password "test1234"
                                    :postgres-db-user "db-user" :postgres-db-password "db-password"}))))
-
-(deftest should-generate-postgres-deployment
-  (is (= {:apiVersion "apps/v1"
-          :kind "Deployment"
-          :metadata {:name "postgresql"}
-          :spec
-          {:selector {:matchLabels {:app "postgresql"}}
-           :strategy {:type "Recreate"}
-           :template
-           {:metadata {:labels {:app "postgresql"}}
-            :spec
-            {:containers
-             [{:image "postgres"
-               :name "postgresql"
-               :env
-               [{:name "POSTGRES_USER", :value "psqluser"}
-                {:name "POSTGRES_DB", :value "keycloak"}
-                {:name "POSTGRES_PASSWORD", :value "test1234"}]
-               :ports [{:containerPort 5432, :name "postgresql"}]
-               :cmd nil
-               :volumeMounts
-               [{:name "postgres-config-volume"
-                 :mountPath "/etc/postgresql/postgresql.conf"
-                 :subPath "postgresql.conf"
-                 :readOnly true}]}]
-             :volumes [{:name "postgres-config-volume", :configMap {:name "postgres-config"}}]}}}}
-    (cut/generate-postgres-deployment {:postgres-db-user "psqluser" :postgres-db-password "test1234"}))))

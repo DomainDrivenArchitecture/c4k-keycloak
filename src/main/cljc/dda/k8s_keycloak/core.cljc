@@ -1,48 +1,23 @@
 (ns dda.k8s-keycloak.core
-  (:require
-   [clojure.string :as cs]
-   [clojure.spec.alpha :as s]
-   #?(:clj [orchestra.core :refer [defn-spec]]
-      :cljs [orchestra.core :refer-macros [defn-spec]])
+ (:require
+  [clojure.string :as cs] 
+  [clojure.spec.alpha :as s]
+  #?(:clj [orchestra.core :refer [defn-spec]]
+     :cljs [orchestra.core :refer-macros [defn-spec]])
    [dda.k8s-keycloak.yaml :as yaml]
-   [clojure.walk]))
+   [dda.k8s-keycloak.common :as cm]
+   [dda.k8s-keycloak.postgres :as pg]))
 
-(defn bash-env-string?
-  [input]
-  (and (string? input)
-       (not (re-matches #".*['\"\$]+.*" input))))
-
-(defn fqdn-string?
-  [input]
-  (and (string? input)
-       (not (nil? (re-matches #"(?=^.{4,253}\.?$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}\.?$)" input)))))
-
-(s/def ::keycloak-admin-user bash-env-string?)
-(s/def ::keycloak-admin-password bash-env-string?)
-(s/def ::postgres-db-user bash-env-string?)
-(s/def ::postgres-db-password bash-env-string?)
-(s/def ::fqdn fqdn-string?)
-(s/def ::issuer #{:prod :staging})
+(s/def ::keycloak-admin-user cm/bash-env-string?)
+(s/def ::keycloak-admin-password cm/bash-env-string?)
+(s/def ::fqdn cm/fqdn-string?)
+(s/def ::issuer cm/letsencrypt-issuer?)
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
 (def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password
-                            ::postgres-db-user ::postgres-db-password]))
-
-(defn replace-named-value
-  [coll name value]
-  (clojure.walk/postwalk #(if (and (map? %)
-                                   (= name (:name %)))
-                            {:name name :value value}
-                            %) coll))
-
-(defn replace-all-matching-values-by-new-value
-  [coll value-to-match value-to-replace]
-  (clojure.walk/postwalk #(if (and (= (type value-to-match) (type %))
-                                   (= value-to-match %))
-                            value-to-replace
-                            %) coll))
+                            ::pg/postgres-db-user ::pg/postgres-db-password]))
 
 (defn generate-config [my-config my-auth]
   (->
@@ -50,25 +25,15 @@
    (assoc-in [:data :config.edn] (str my-config))
    (assoc-in [:data :credentials.edn] (str my-auth))))
 
-(defn generate-postgres-config []
-   (yaml/from-string (yaml/load-resource "postgres/config.yaml")))
-
 (defn generate-deployment [my-auth]
   (let [{:keys [postgres-db-user postgres-db-password
                 keycloak-admin-user keycloak-admin-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "keycloak/deployment.yaml"))
-     (replace-named-value "KEYCLOAK_USER" keycloak-admin-user)
-     (replace-named-value "DB_USER" postgres-db-user)
-     (replace-named-value "DB_PASSWORD" postgres-db-password)
-     (replace-named-value "KEYCLOAK_PASSWORD" keycloak-admin-password))))
-
-(defn generate-postgres-deployment [my-auth]
-  (let [{:keys [postgres-db-user postgres-db-password]} my-auth]
-    (->
-     (yaml/from-string (yaml/load-resource "postgres/deployment.yaml"))
-     (replace-named-value "POSTGRES_USER" postgres-db-user)
-     (replace-named-value "POSTGRES_PASSWORD" postgres-db-password))))
+     (cm/replace-named-value "KEYCLOAK_USER" keycloak-admin-user)
+     (cm/replace-named-value "DB_USER" postgres-db-user)
+     (cm/replace-named-value "DB_PASSWORD" postgres-db-password)
+     (cm/replace-named-value "KEYCLOAK_PASSWORD" keycloak-admin-password))))
 
 (defn generate-certificate [config]
   (let [{:keys [fqdn issuer]
@@ -87,23 +52,20 @@
     (->
      (yaml/from-string (yaml/load-resource "keycloak/ingress.yaml"))
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
-     (replace-all-matching-values-by-new-value "fqdn" fqdn))))
+     (cm/replace-all-matching-values-by-new-value "fqdn" fqdn))))
 
 (defn generate-service []
   (yaml/from-string (yaml/load-resource "keycloak/service.yaml")))
-
-(defn generate-postgres-service []
-  (yaml/from-string (yaml/load-resource "postgres/service.yaml")))
 
 (defn-spec generate any?
   [my-config config?
    my-auth auth?]
   (cs/join "\n"
-           [(yaml/to-string (generate-postgres-config))
+           [(yaml/to-string (pg/generate-config))
             "---"
-            (yaml/to-string (generate-postgres-service))
+            (yaml/to-string (pg/generate-service))
             "---"
-            (yaml/to-string (generate-postgres-deployment my-auth))
+            (yaml/to-string (pg/generate-deployment my-auth))
             "---"
             (yaml/to-string (generate-config my-config my-auth))
             "---"
