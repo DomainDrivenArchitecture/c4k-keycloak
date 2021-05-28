@@ -22,7 +22,7 @@ spec:
         - name: DB_VENDOR
           value: POSTGRES
         - name: DB_ADDR
-          value: postgres
+          value: postgresql-service
         - name: DB_DATABASE
           value: keycloak
         - name: DB_USER

@@ -107,6 +107,6 @@ kubectl get pods
 ### deploy keycloak
 
 ```
-java -jar target/uberjar/k8s-keycloak-standalone.jar myconfig.edn myauth.edn | kubeval -
-java -jar target/uberjar/k8s-keycloak-standalone.jar myconfig.edn myauth.edn | kubectl apply -f -
+java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeval -
+java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubectl apply -f -
 ```
