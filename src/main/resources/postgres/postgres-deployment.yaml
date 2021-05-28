@@ -20,7 +20,7 @@ spec:
             - name: POSTGRES_USER
               value: "psql-user"
             - name: POSTGRES_DB
-              value: "psql-db"
+              value: "keycloak"
             - name: POSTGRES_PASSWORD
               value: "psql-pw"
           ports:

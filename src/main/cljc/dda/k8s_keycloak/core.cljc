@@ -17,15 +17,16 @@
   (and (string? input)
        (not (nil? (re-matches #"(?=^.{4,253}\.?$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}\.?$)" input)))))
 
-(s/def ::user-name bash-env-string?)
-(s/def ::user-password string?)
+(s/def ::keycloak-admin-user bash-env-string?)
+(s/def ::keycloak-admin-password string?)
+(s/def ::postgres-db-user bash-env-string?)
 (s/def ::fqdn fqdn-string?)
 (s/def ::issuer #{:prod :staging})
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? (s/keys :req-un [::user-name ::user-password]))
+(def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password]))
 
 (defn replace-all-matching-values-by-new-value
   [coll value-to-match value-to-replace]
@@ -44,11 +45,11 @@
    (yaml/from-string (yaml/load-resource "postgres/postgres-config.yaml")))
 
 (defn generate-deployment [my-auth]
-  (let [{:keys [user-name user-password]} my-auth]
+  (let [{:keys [keycloak-admin-user keycloak-admin-password]} my-auth]
     (->
      (yaml/from-string (yaml/load-resource "deployment.yaml"))
-     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] user-name)
-     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] user-password))))
+     (assoc-in [:spec :template :spec :containers 0 :env 0 :value] keycloak-admin-user)
+     (assoc-in [:spec :template :spec :containers 0 :env 1 :value] keycloak-admin-password))))
 
 (defn generate-postgres-deployment [my-auth]
   (let [{:keys [postgres-user postgres-password postgres-db]} my-auth]

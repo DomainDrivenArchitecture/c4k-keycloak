@@ -19,10 +19,22 @@ spec:
       - name: keycloak
         image: quay.io/keycloak/keycloak:13.0.0
         env:
+        - name: DB_VENDOR
+          value: POSTGRES
+        - name: DB_ADDR
+          value: postgres
+        - name: DB_DATABASE
+          value: keycloak
+        - name: DB_USER
+          value: keycloak
+        - name: DB_SCHEMA
+          value: public
+        - name: DB_PASSWORD
+          value: password
         - name: KEYCLOAK_USER
-          value: "admin"
+          value: admin
         - name: KEYCLOAK_PASSWORD
-          value: "admin"
+          value: admin
         - name: PROXY_ADDRESS_FORWARDING
           value: "true"
         ports:
