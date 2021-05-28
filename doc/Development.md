@@ -81,14 +81,12 @@ apt update && apt install kubectl
 kubectl completion bash >> /etc/bash_completion.d/kubernetes
 ```
 
-### install kubeval
+### install kubeconform
 
 ```
-wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
-tar xf kubeval-linux-amd64.tar.gz
-sudo cp kubeval /usr/local/bin
-
-## remote access to k8s
+curl -Lo /tmp/kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.4.7/kubeconform-linux-amd64.tar.gz
+tar -xf /tmp/kubeconform.tar.gz
+sudo cp kubeconform /usr/local/bin
 ```
 
 ### remote access to k8s
@@ -107,6 +105,6 @@ kubectl get pods
 ### deploy keycloak
 
 ```
-java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeval -
+java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
 java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubectl apply -f -
 ```
