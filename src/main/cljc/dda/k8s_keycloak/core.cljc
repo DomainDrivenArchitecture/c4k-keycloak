@@ -51,13 +51,13 @@
    (assoc-in [:data :credentials.edn] (str my-auth))))
 
 (defn generate-postgres-config []
-   (yaml/from-string (yaml/load-resource "postgres/postgres-config.yaml")))
+   (yaml/from-string (yaml/load-resource "postgres/config.yaml")))
 
 (defn generate-deployment [my-auth]
   (let [{:keys [postgres-db-user postgres-db-password
                 keycloak-admin-user keycloak-admin-password]} my-auth]
     (->
-     (yaml/from-string (yaml/load-resource "deployment.yaml"))
+     (yaml/from-string (yaml/load-resource "keycloak/deployment.yaml"))
      (replace-named-value "KEYCLOAK_USER" keycloak-admin-user)
      (replace-named-value "DB_USER" postgres-db-user)
      (replace-named-value "DB_PASSWORD" postgres-db-password)
@@ -66,7 +66,7 @@
 (defn generate-postgres-deployment [my-auth]
   (let [{:keys [postgres-db-user postgres-db-password]} my-auth]
     (->
-     (yaml/from-string (yaml/load-resource "postgres/postgres-deployment.yaml"))
+     (yaml/from-string (yaml/load-resource "postgres/deployment.yaml"))
      (replace-named-value "POSTGRES_USER" postgres-db-user)
      (replace-named-value "POSTGRES_PASSWORD" postgres-db-password))))
 
@@ -75,7 +75,7 @@
          :or {issuer :staging}} config
         letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
     (->
-     (yaml/from-string (yaml/load-resource "certificate.yaml"))
+     (yaml/from-string (yaml/load-resource "keycloak/certificate.yaml"))
      (assoc-in [:spec :commonName] fqdn)
      (assoc-in [:spec :dnsNames] [fqdn])
      (assoc-in [:spec :issuerRef :name] letsencrypt-issuer))))
@@ -85,15 +85,15 @@
          :or {issuer :staging}} config
         letsencrypt-issuer (str "letsencrypt-" (name issuer) "-issuer")]
     (->
-     (yaml/from-string (yaml/load-resource "ingress.yaml"))
+     (yaml/from-string (yaml/load-resource "keycloak/ingress.yaml"))
      (assoc-in [:metadata :annotations :cert-manager.io/cluster-issuer] letsencrypt-issuer)
      (replace-all-matching-values-by-new-value "fqdn" fqdn))))
 
 (defn generate-service []
-  (yaml/from-string (yaml/load-resource "service.yaml")))
+  (yaml/from-string (yaml/load-resource "keycloak/service.yaml")))
 
 (defn generate-postgres-service []
-  (yaml/from-string (yaml/load-resource "postgres/postgres-service.yaml")))
+  (yaml/from-string (yaml/load-resource "postgres/service.yaml")))
 
 (defn-spec generate any?
   [my-config config?
