@@ -106,5 +106,5 @@ kubectl get pods
 
 ```
 java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
-java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubectl apply -f -
+java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn my-auth.edn | kubectl apply -f -
 ```

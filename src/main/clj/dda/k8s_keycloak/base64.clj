@@ -5,7 +5,7 @@
   [string]
   (.encodeToString 
    (Base64/getEncoder) 
-   (.getBytes string))) 
+   (.getBytes string "UTF-8"))) 
 
 (defn decode
   [string]
