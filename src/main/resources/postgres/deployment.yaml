@@ -31,7 +31,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config
-                  key: postgres-db            
+                  key: postgres-db
           ports:
             - containerPort: 5432
               name: postgresql
