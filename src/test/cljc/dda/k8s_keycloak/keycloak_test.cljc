@@ -1,16 +1,18 @@
-(ns dda.k8s-keycloak.core-test
+(ns dda.k8s-keycloak.keycloak-test
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
-   [dda.k8s-keycloak.core :as cut]))
+   [dda.k8s-keycloak.keycloak :as cut]))
 
-(deftest should-generate-yaml
-  (is (=  {:apiVersion "v1", :kind "ConfigMap"
-           :metadata {:name "keycloak", 
-                      :labels {:app.kubernetes.io/name "k8s-keycloak"}}, 
-           :data {:config.edn "some-config-value\n", 
-                  :credentials.edn "some-credentials-value\n"}}
-          (cut/generate-config "some-config-value\n" "some-credentials-value\n"))))
+(deftest should-generate-secret
+  (is (= {:apiVersion "v1"
+          :kind "Secret"
+          :metadata {:name "keycloak-secret"}
+          :type "Opaque"
+          :data
+          {:keycloak-user "dXNlcg=="
+           :keycloak-password "cGFzc3dvcmQ="}}
+         (cut/generate-secret {:keycloak-admin-user "user" :keycloak-admin-password "password"}))))
 
 (deftest should-generate-certificate
   (is (= {:apiVersion "cert-manager.io/v1alpha2"
@@ -65,7 +67,10 @@
 (deftest should-generate-deployment
   (is (= {:apiVersion "apps/v1"
           :kind "Deployment"
-          :metadata {:name "keycloak", :namespace "default", :labels {:app "keycloak"}}
+          :metadata
+          {:name "keycloak"
+           :namespace "default"
+           :labels {:app "keycloak"}}
           :spec
           {:replicas 1
            :selector {:matchLabels {:app "keycloak"}}
@@ -78,14 +83,32 @@
                :env
                [{:name "DB_VENDOR", :value "POSTGRES"}
                 {:name "DB_ADDR", :value "postgresql-service"}
-                {:name "DB_DATABASE", :value "keycloak"}
-                {:name "DB_USER", :value "db-user"}
                 {:name "DB_SCHEMA", :value "public"}
-                {:name "DB_PASSWORD", :value "db-password"}
-                {:name "KEYCLOAK_USER", :value "testuser"}
-                {:name "KEYCLOAK_PASSWORD", :value "test1234"}
-                {:name "PROXY_ADDRESS_FORWARDING", :value "true"}]
+                {:name "DB_DATABASE"
+                 :valueFrom
+                 {:configMapKeyRef
+                  {:name "postgres-config", :key "postgres-db"}}}
+                {:name "DB_USER"
+                 :valueFrom
+                 {:secretKeyRef
+                  {:name "postgres-secret", :key "postgres-user"}}}
+                {:name "DB_PASSWORD"
+                 :valueFrom
+                 {:secretKeyRef
+                  {:name "postgres-secret"
+                   :key "postgres-password"}}}
+                {:name "PROXY_ADDRESS_FORWARDING", :value "true"}
+                {:name "KEYCLOAK_USER"
+                 :valueFrom
+                 {:secretKeyRef
+                  {:name "keycloak-secret", :key "keycloak-user"}}}
+                {:name "KEYCLOAK_PASSWORD"
+                 :valueFrom
+                 {:secretKeyRef
+                  {:name "keycloak-secret"
+                   :key "keycloak-password"}}}]
                :ports [{:name "http", :containerPort 8080}]
-               :readinessProbe {:httpGet {:path "/auth/realms/master", :port 8080}}}]}}}}
-         (cut/generate-deployment {:keycloak-admin-user "testuser" :keycloak-admin-password "test1234"
-                                   :postgres-db-user "db-user" :postgres-db-password "db-password"}))))
+               :readinessProbe
+               {:httpGet
+                {:path "/auth/realms/master", :port 8080}}}]}}}}
+         (cut/generate-deployment))))
