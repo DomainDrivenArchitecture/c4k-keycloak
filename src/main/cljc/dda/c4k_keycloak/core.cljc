@@ -1,12 +1,12 @@
-(ns dda.k8s-keycloak.core
+(ns dda.c4k-keycloak.core
  (:require
   [clojure.string :as cs]
   [clojure.spec.alpha :as s]
   #?(:clj [orchestra.core :refer [defn-spec]]
      :cljs [orchestra.core :refer-macros [defn-spec]])
-  [dda.k8s-keycloak.yaml :as yaml]
-  [dda.k8s-keycloak.keycloak :as kc]
-  [dda.k8s-keycloak.postgres :as pg]))
+  [dda.c4k-keycloak.yaml :as yaml]
+  [dda.c4k-keycloak.keycloak :as kc]
+  [dda.c4k-keycloak.postgres :as pg]))
 
 (def config? (s/keys :req-un [::kc/fqdn]
                      :opt-un [::kc/issuer]))

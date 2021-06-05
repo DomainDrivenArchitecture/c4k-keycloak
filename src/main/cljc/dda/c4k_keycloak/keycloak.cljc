@@ -1,9 +1,9 @@
-(ns dda.k8s-keycloak.keycloak
+(ns dda.c4k-keycloak.keycloak
  (:require
   [clojure.spec.alpha :as s]
-  [dda.k8s-keycloak.yaml :as yaml]
-  [dda.k8s-keycloak.base64 :as b64]
-  [dda.k8s-keycloak.common :as cm]))
+  [dda.c4k-keycloak.yaml :as yaml]
+  [dda.c4k-keycloak.base64 :as b64]
+  [dda.c4k-keycloak.common :as cm]))
 
 (s/def ::keycloak-admin-user cm/bash-env-string?)
 (s/def ::keycloak-admin-password cm/bash-env-string?)

@@ -1,4 +1,4 @@
-(ns dda.k8s-keycloak.yaml
+(ns dda.c4k-keycloak.yaml
   (:require
    [clojure.java.io :as io]
    [clj-yaml.core :as yaml]

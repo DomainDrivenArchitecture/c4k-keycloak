@@ -1,9 +1,9 @@
-(ns dda.k8s-keycloak.postgres
+(ns dda.c4k-keycloak.postgres
   (:require
    [clojure.spec.alpha :as s]
-   [dda.k8s-keycloak.yaml :as yaml]
-   [dda.k8s-keycloak.base64 :as b64]
-   [dda.k8s-keycloak.common :as cm]))
+   [dda.c4k-keycloak.yaml :as yaml]
+   [dda.c4k-keycloak.base64 :as b64]
+   [dda.c4k-keycloak.common :as cm]))
 
 (s/def ::postgres-db-user cm/bash-env-string?)
 (s/def ::postgres-db-password cm/bash-env-string?)

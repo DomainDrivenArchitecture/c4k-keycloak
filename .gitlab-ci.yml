@@ -26,7 +26,7 @@ stages:
     - mkdir -p /root/.lein
     - echo "{:auth {:repository-auth {#\"clojars\" {:username \"${CLOJARS_USER}\" :password \"${CLOJARS_TOKEN_DOMAINDRIVENARCHITECTURE}\" }}}}" > ~/.lein/profiles.clj
 
-.test-cljs:
+test-cljs:
   <<: *cljs
   stage: build_and_test
   script:

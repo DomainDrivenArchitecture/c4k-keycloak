@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/k8s-keycloak "0.1.0-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-keycloak "0.1.0-SNAPSHOT"
   :description "keycloak k8s-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -22,7 +22,7 @@
                     :dependencies [[dda/data-test "0.1.1"]]}
              :dev {:plugins [[lein-shell "0.5.0"]]}
              :uberjar {:aot :all
-                       :main dda.k8s-keycloak.uberjar
+                       :main dda.c4k-keycloak.uberjar
                        :uberjar-name "k8s-keycloak-standalone.jar"
                        :dependencies [[org.clojure/tools.cli "1.0.206"]
                                       [ch.qos.logback/logback-classic "1.3.0-alpha4"

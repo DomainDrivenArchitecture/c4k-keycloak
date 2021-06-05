@@ -1,4 +1,4 @@
-(ns dda.k8s-keycloak.common
+(ns dda.c4k-keycloak.common
   (:require
    [clojure.walk]))
 

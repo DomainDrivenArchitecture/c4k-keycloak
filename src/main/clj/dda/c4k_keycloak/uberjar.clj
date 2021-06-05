@@ -1,11 +1,11 @@
-(ns dda.k8s-keycloak.uberjar
+(ns dda.c4k-keycloak.uberjar
   (:gen-class)
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as cs]
    [clojure.tools.reader.edn :as edn]
    [expound.alpha :as expound]
-   [dda.k8s-keycloak.core :as core]))
+   [dda.c4k-keycloak.core :as core]))
 
 (def usage
   "usage:

@@ -1,8 +1,8 @@
-(ns dda.k8s-keycloak.postgres-test
+(ns dda.c4k-keycloak.postgres-test
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
-   [dda.k8s-keycloak.postgres :as cut]))
+   [dda.c4k-keycloak.postgres :as cut]))
 
 (deftest should-generate-secret
   (is (= {:apiVersion "v1"
