@@ -9,9 +9,9 @@
   (print "debug " sth)
   sth)
 
-(defn config []
+(defn fqdn []
     (-> js/document
-      (.getElementById "config")))
+      (.getElementById "fqdn")))
 
 (defn auth []
   (-> js/document
@@ -22,8 +22,9 @@
       (.getElementById "form")))
 
 (defn config-from-document []
-  (-> (config)
-      (.-value)))
+  {:fqdn
+   (-> (fqdn)
+       (.-value))})
 
 (defn auth-from-document []
   (-> (auth)
@@ -42,7 +43,7 @@
       (.getElementById "config-validation")
       (.-innerHTML)
       (set! validation-result))
-  (-> (config)
+  (-> (fqdn)
       (.setCustomValidity validation-result))
   validation-result)
 
@@ -87,7 +88,7 @@
                               (set-validated!)
                               (-> (core/generate (config-from-document) (auth-from-document))
                                   (set-output!)))))
-  (-> (config)
+  (-> (fqdn)
       (.addEventListener "blur"
                          #(do (validate-config!)
                               (validate-auth!)
