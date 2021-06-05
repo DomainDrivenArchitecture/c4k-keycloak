@@ -58,18 +58,18 @@ sudo ln -s /usr/lib/jvm/graalvm/bin/native-image /usr/local/bin
 sudo apt-get install build-essential libz-dev zlib1g-dev
 
 # build
-cd ~/repo/dda/k8s-keycloak
+cd ~/repo/dda/c4k-keycloak
 lein uberjar
 mkdir -p target/graalvm
 lein native
 
 # execute
-./target/graalvm/k8s-keycloak -h
-./target/graalvm/k8s-keycloak src/test/resources/valid-config.edn src/test/resources/valid-auth.edn 
-./target/graalvm/k8s-keycloak src/test/resources/invalid-config.edn src/test/resources/invalid-auth.edn
+./target/graalvm/c4k-keycloak -h
+./target/graalvm/c4k-keycloak src/test/resources/valid-config.edn src/test/resources/valid-auth.edn 
+./target/graalvm/c4k-keycloak src/test/resources/invalid-config.edn src/test/resources/invalid-auth.edn
 ```
 
-## k8s-setup
+## c4k-setup
 ### install kubectl
 
 ```
@@ -89,10 +89,10 @@ tar -xf /tmp/kubeconform.tar.gz
 sudo cp kubeconform /usr/local/bin
 ```
 
-### remote access to k8s
+### remote access to c4k
 
 ```
-scp -r root@devops.test.meissa-gmbh.de:/home/k8s/.kube ~/
+scp -r root@devops.test.meissa-gmbh.de:/home/c4k/.kube ~/
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@devops.test.meissa-gmbh.de -L 8002:localhost:8002 -L 6443:192.168.5.1:6443
 
 # add in /etc/hosts "127.0.0.1 kubernetes"
@@ -105,6 +105,6 @@ kubectl get pods
 ### deploy keycloak
 
 ```
-java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
-java -jar target/uberjar/k8s-keycloak-standalone.jar valid-config.edn my-auth.edn | kubectl apply -f -
+java -jar target/uberjar/c4k-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
+java -jar target/uberjar/c4k-keycloak-standalone.jar valid-config.edn my-auth.edn | kubectl apply -f -
 ```

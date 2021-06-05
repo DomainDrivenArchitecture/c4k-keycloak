@@ -1,10 +1,10 @@
 {
   "name": "c4k-keycloak",
-  "description": "Generate k8s yaml for a keycloak deployment.",
+  "description": "Generate c4k yaml for a keycloak deployment.",
   "author": "meissa GmbH",
   "version": "0.1.5-SNAPSHOT",
-  "homepage": "https://gitlab.com/domaindrivenarchitecture/k8s-keycloak#readme",
-  "repository": "https://www.npmjs.com/package/k8s-keycloak",
+  "homepage": "https://gitlab.com/domaindrivenarchitecture/c4k-keycloak#readme",
+  "repository": "https://www.npmjs.com/package/c4k-keycloak",
   "license": "APACHE2",
   "main": "c4k-keycloak.js",
   "bin": {
@@ -14,12 +14,13 @@
     "cljs",
     "keycloak",
     "k8s",
+    "c4k",
     "deplyoment",
     "yaml",
     "convention4kubernetes"
   ],
   "bugs": {
-    "url": "https://gitlab.com/domaindrivenarchitecture/k8s-keycloak/issues"
+    "url": "https://gitlab.com/domaindrivenarchitecture/c4k-keycloak/issues"
   },
   "dependencies": {
     "js-base64": "^3.6.1",

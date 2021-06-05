@@ -10,7 +10,7 @@
 (def usage
   "usage:
   
-  k8s-keycloak {your configuraton file} {your authorization file}")
+  c4k-keycloak {your configuraton file} {your authorization file}")
 
 (s/def ::options (s/* #{"-h"}))
 (s/def ::filename (s/and string?
