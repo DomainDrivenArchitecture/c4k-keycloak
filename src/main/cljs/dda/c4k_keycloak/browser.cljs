@@ -11,7 +11,7 @@
 
 (defn fqdn []
     (-> js/document
-      (.getElementById "fqdn")))
+        (.getElementById "fqdn")))
 
 (defn issuer []
   (-> js/document
@@ -38,8 +38,8 @@
     :issuer (issuer-from-document)})
 
 (defn auth-from-document []
-  (-> (auth)
-      (.-value)))
+  (edn/read-string (-> (auth)
+                       (.-value))))
 
 (defn set-output!
   [input]
@@ -83,8 +83,7 @@
   validation-result)
 
 (defn validate-auth! []
-  (let [auth-str (auth-from-document)
-        auth-map (edn/read-string auth-str)]
+  (let [auth-map (auth-from-document)]
     (if (s/valid? core/auth? auth-map)
       (set-auth-validation-result! "")
       (set-auth-validation-result!
