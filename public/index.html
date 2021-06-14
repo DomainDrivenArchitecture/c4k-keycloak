@@ -13,9 +13,10 @@
   <div class="container jumbotron">
     <form class="needs-validation" id="form">
     <label for="config" class="form-label">Your fqdn:</label>
-    <textarea name="fqdn" id="fqdn" class="form-control" rows="1">
-      your.domain.com
-    </textarea>
+    <input class="form-control" type="text" name="fqdn" id="fqdn" value="your.domain.com">
+    <br>
+    <label for="config" class="form-label">(Optional) Your issuer prod/staging:</label>
+    <input class="form-control" type="text" name="issuer" id="issuer" value="">
     <div class="invalid-feedback"><pre id="config-validation"></pre></div>
     <br><br>
 

@@ -13,6 +13,17 @@
     (-> js/document
       (.getElementById "fqdn")))
 
+(defn issuer []
+  (-> js/document
+      (.getElementById "issuer")))
+
+(defn issuer-from-document []
+  (let [issuer-str (-> (issuer)
+                       (.-value))]
+    (if (= issuer-str "")
+      :staging
+      (keyword issuer-str))))
+
 (defn auth []
   (-> js/document
       (.getElementById "auth")))
@@ -22,9 +33,9 @@
       (.getElementById "form")))
 
 (defn config-from-document []
-  {:fqdn
-   (-> (fqdn)
-       (.-value))})
+   {:fqdn (-> (fqdn)
+              (.-value))
+    :issuer (issuer-from-document)})
 
 (defn auth-from-document []
   (-> (auth)
@@ -45,11 +56,12 @@
       (set! validation-result))
   (-> (fqdn)
       (.setCustomValidity validation-result))
+  (-> (issuer)
+      (.setCustomValidity validation-result))
   validation-result)
 
 (defn validate-config! []
-  (let [config-str (config-from-document)
-        config-map (edn/read-string config-str)]
+  (let [config-map (config-from-document)]
     (if (s/valid? core/config? config-map)
       (set-config-validation-result! "")
       (set-config-validation-result!
@@ -73,7 +85,6 @@
 (defn validate-auth! []
   (let [auth-str (auth-from-document)
         auth-map (edn/read-string auth-str)]
-    (print-debug (s/valid? core/auth? auth-map))
     (if (s/valid? core/auth? auth-map)
       (set-auth-validation-result! "")
       (set-auth-validation-result!
@@ -94,6 +105,11 @@
                               (validate-auth!)
                               (set-validated!))))
   (-> (auth)
+      (.addEventListener "blur"
+                         #(do (validate-config!)
+                              (validate-auth!)
+                              (set-validated!))))
+  (-> (issuer)
       (.addEventListener "blur"
                          #(do (validate-config!)
                               (validate-auth!)
