@@ -11,9 +11,29 @@
   (print "debug " sth)
   sth)
 
-(defn fqdn []
-    (-> js/document
-        (.getElementById "fqdn")))
+(defn get-element-by-id [name]
+  (-> js/document
+      (.getElementById name)))
+
+(defn get-content-from-element [name]
+  (-> (get-element-by-id name)
+      (.-value)))
+
+(defn set-validation-result!
+  [name validation-result]
+  (-> (get-element-by-id (str name "-validation"))
+      (.-innerHTML)
+      (set! validation-result))
+  (-> (get-element-by-id name)
+      (.setCustomValidity validation-result))
+  validation-result)
+
+(defn validate! [name spec]
+  (let [content (get-content-from-element name)]
+    (if (s/valid? spec content)
+      (set-validation-result! name "")
+      (set-validation-result! name
+       (expound/expound-str spec content {:print-specs? false})))))
 
 (defn issuer []
   (-> js/document
@@ -25,10 +45,6 @@
     (when-not (st/blank? issuer-str)
       (keyword issuer-str))))
 
-(defn fqdn-from-document []
-  (-> (fqdn)
-      (.-value)))
-
 (defn auth []
   (-> js/document
       (.getElementById "auth")))
@@ -39,7 +55,7 @@
 
 (defn config-from-document []
   (merge
-   {:fqdn (fqdn-from-document)}
+   {:fqdn (get-content-from-element "fqdn")}
    (when-not (st/blank? (issuer-from-document))
      {:issuer (issuer-from-document)})))
 
@@ -54,16 +70,6 @@
       (.-value)
       (set! input)))
 
-(defn set-fqdn-validation-result!
-  [validation-result]
-  (-> js/document
-      (.getElementById "fqdn-validation")
-      (.-innerHTML)
-      (set! validation-result))
-  (-> (fqdn)
-      (.setCustomValidity validation-result))
-  validation-result)
-
 (defn set-issuer-validation-result!
   [validation-result]
   (-> js/document
@@ -73,13 +79,6 @@
   (-> (issuer)
       (.setCustomValidity validation-result))
   validation-result)
-
-(defn validate-fqdn! []
-  (let [fqdn (fqdn-from-document)]
-    (if (s/valid? ::kc/fqdn fqdn)
-      (set-fqdn-validation-result! "")
-      (set-fqdn-validation-result!
-       (expound/expound-str ::kc/fqdn fqdn {:print-specs? false})))))
 
 (defn validate-issuer! []
   (let [issuer (issuer-from-document)]
@@ -113,7 +112,7 @@
        (expound/expound-str core/auth? auth-map {:print-specs? false})))))
 
 (defn validate-all! []
-  (validate-fqdn!)
+  (validate! "fqdn" ::kc/fqdn)
   (validate-issuer!)
   (validate-auth!)
   (set-validated!))
@@ -126,7 +125,7 @@
                          #(do (validate-all!)
                               (-> (core/generate (config-from-document) (auth-from-document))
                                   (set-output!)))))
-  (-> (fqdn)
+  (-> (get-element-by-id "fqdn")
       (.addEventListener "blur"
                          #(do (validate-all!))))
   (-> (issuer)
