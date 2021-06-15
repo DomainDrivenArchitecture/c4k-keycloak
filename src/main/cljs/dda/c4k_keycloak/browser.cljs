@@ -35,6 +35,13 @@
       (set-validation-result! name
        (expound/expound-str spec content {:print-specs? false})))))
 
+(defn validate-optional! [name spec]
+  (let [content (get-content-from-element name)]
+    (if (or (st/blank? content) (s/valid? spec content))
+      (set-validation-result! name "")
+      (set-validation-result! name
+       (expound/expound-str spec content {:print-specs? false})))))
+
 (defn issuer []
   (-> js/document
       (.getElementById "issuer")))
@@ -44,6 +51,15 @@
                        (.-value))]
     (when-not (st/blank? issuer-str)
       (keyword issuer-str))))
+
+(defn validate-issuer! []
+  (let [name "issuer"
+        spec ::kc/issuer
+        issuer (issuer-from-document)]
+    (if (or (st/blank? issuer) (s/valid? spec issuer))
+      (set-validation-result! name "")
+      (set-validation-result! name
+       (expound/expound-str spec issuer {:print-specs? false})))))
 
 (defn auth []
   (-> js/document
@@ -59,9 +75,9 @@
    (when-not (st/blank? (issuer-from-document))
      {:issuer (issuer-from-document)})))
 
-  (defn auth-from-document []
-    (edn/read-string (-> (auth)
-                         (.-value))))
+(defn auth-from-document []
+  (edn/read-string (-> (auth)
+                       (.-value))))
 
 (defn set-output!
   [input]
@@ -69,25 +85,6 @@
       (.getElementById "output")
       (.-value)
       (set! input)))
-
-(defn set-issuer-validation-result!
-  [validation-result]
-  (-> js/document
-      (.getElementById "issuer-validation")
-      (.-innerHTML)
-      (set! validation-result))
-  (-> (issuer)
-      (.setCustomValidity validation-result))
-  validation-result)
-
-(defn validate-issuer! []
-  (let [issuer (issuer-from-document)]
-    (print-debug (js->clj issuer))
-    (print-debug (st/blank? issuer))
-    (if (or (st/blank? issuer) (s/valid? ::kc/issuer issuer))
-      (set-issuer-validation-result! "")
-      (set-issuer-validation-result!
-       (expound/expound-str ::kc/issuer issuer {:print-specs? false})))))
 
 (defn set-validated! []
   (-> (form)
@@ -116,7 +113,6 @@
   (validate-issuer!)
   (validate-auth!)
   (set-validated!))
-
 
 (defn init []
   (-> js/document
