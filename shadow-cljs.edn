@@ -3,9 +3,7 @@
                 "src/main/resources"
                 "src/test/cljc"
                 "src/test/resources"]
- :dependencies [[aero "1.1.6"]
-                [orchestra "2021.01.01-1"]
-                [expound "0.8.9"]]
+ :dependencies [[org.domaindrivenarchitecture/c4k-common-cljs "0.1.0-SNAPSHOT"]]
  :dev-http {8080 "public"}
  :builds {:frontend {:target :browser
                      :modules {:main {:init-fn dda.c4k-keycloak.browser/init}}
