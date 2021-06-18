@@ -4,23 +4,40 @@
    [clojure.spec.alpha :as s]
    [clojure.tools.reader.edn :as edn]
    [expound.alpha :as expound]
+   [orchestra.core :refer-macros [defn-spec]]
    [dda.c4k-keycloak.core :as core]
    [dda.c4k-keycloak.keycloak :as kc]))
 
-(defn print-debug [sth]
+(defn-spec print-debug string?
+  [sth string?]
   (print "debug " sth)
   sth)
 
-(defn get-element-by-id [name]
+(defn-spec get-element-by-id any?
+  [name string?]
   (-> js/document
       (.getElementById name)))
 
-(defn get-content-from-element [name]
-  (-> (get-element-by-id name)
-      (.-value)))
+(s/def ::deserializer fn?)
+(s/def ::optional boolean?)
+(defn-spec get-content-from-element any?
+  [name string?
+   & {:keys [deserializer optional]
+      :or {deserializer nil optional false}} (s/keys :opt-un [::deserializer ::optional])]
+  (let [content (-> (get-element-by-id name)
+                    (.-value))]
+    (cond
+      (and optional (some? deserializer))
+      (when-not (st/blank? content)
+        (apply deserializer [content]))
+      (and (false? optional) (some? deserializer))
+      (apply deserializer [content])
+      :else
+      content)))
 
-(defn set-validation-result!
-  [name validation-result]
+(defn-spec set-validation-result! any?
+  [name string?
+   validation-result any?]
   (-> (get-element-by-id (str name "-validation"))
       (.-innerHTML)
       (set! validation-result))
@@ -28,56 +45,17 @@
       (.setCustomValidity validation-result))
   validation-result)
 
-(defn validate! [name spec]
-  (let [content (get-content-from-element name)]
-    (if (s/valid? spec content)
+(defn-spec validate! any?
+  [name string?
+   spec any?
+   & {:keys [deserializer optional]
+      :or {deserializer nil optional false}} (s/keys :opt-un [::deserializer ::optional])]
+  (let [content (get-content-from-element name :optional optional :deserializer deserializer)]
+    (if (or (and optional (st/blank? content)) 
+            (s/valid? spec content))
       (set-validation-result! name "")
       (set-validation-result! name
        (expound/expound-str spec content {:print-specs? false})))))
-
-(defn validate-optional! [name spec]
-  (let [content (get-content-from-element name)]
-    (if (or (st/blank? content) (s/valid? spec content))
-      (set-validation-result! name "")
-      (set-validation-result! name
-       (expound/expound-str spec content {:print-specs? false})))))
-
-(defn issuer []
-  (-> js/document
-      (.getElementById "issuer")))
-
-(defn issuer-from-document []
-  (let [issuer-str (-> (issuer)
-                       (.-value))]
-    (when-not (st/blank? issuer-str)
-      (keyword issuer-str))))
-
-(defn validate-issuer! []
-  (let [name "issuer"
-        spec ::kc/issuer
-        issuer (issuer-from-document)]
-    (if (or (st/blank? issuer) (s/valid? spec issuer))
-      (set-validation-result! name "")
-      (set-validation-result! name
-       (expound/expound-str spec issuer {:print-specs? false})))))
-
-(defn auth []
-  (-> js/document
-      (.getElementById "auth")))
-
-(defn form []
-  (-> js/document
-      (.getElementById "form")))
-
-(defn config-from-document []
-  (merge
-   {:fqdn (get-content-from-element "fqdn")}
-   (when-not (st/blank? (issuer-from-document))
-     {:issuer (issuer-from-document)})))
-
-(defn auth-from-document []
-  (edn/read-string (-> (auth)
-                       (.-value))))
 
 (defn set-output!
   [input]
@@ -87,31 +65,21 @@
       (set! input)))
 
 (defn set-validated! []
-  (-> (form)
+  (-> (get-element-by-id "form")
       (.-classList)
       (.add "was-validated")))
 
-(defn set-auth-validation-result!
-  [validation-result]
-  (-> js/document
-       (.getElementById "auth-validation")
-       (.-innerHTML)
-       (set! validation-result))
-  (-> (auth)
-      (.setCustomValidity validation-result))
-  validation-result)
-
-(defn validate-auth! []
-  (let [auth-map (auth-from-document)]
-    (if (s/valid? core/auth? auth-map)
-      (set-auth-validation-result! "")
-      (set-auth-validation-result!
-       (expound/expound-str core/auth? auth-map {:print-specs? false})))))
+(defn config-from-document []
+  (let [issuer (get-content-from-element "issuer" :optional true :deserializer keyword)]
+    (merge
+     {:fqdn (get-content-from-element "fqdn")}
+     (when (some? issuer)
+       {:issuer issuer}))))
 
 (defn validate-all! []
   (validate! "fqdn" ::kc/fqdn)
-  (validate-issuer!)
-  (validate-auth!)
+  (validate! "issuer" ::kc/issuer :optional true :deserializer keyword)
+  (validate! "auth" core/auth? :deserializer edn/read-string)
   (set-validated!))
 
 (defn init []
@@ -119,15 +87,17 @@
       (.getElementById "generate-button")
       (.addEventListener "click"
                          #(do (validate-all!)
-                              (-> (core/generate (config-from-document) (auth-from-document))
+                              (-> (core/generate 
+                                   (config-from-document) 
+                                   (get-content-from-element "auth" :deserializer edn/read-string))
                                   (set-output!)))))
   (-> (get-element-by-id "fqdn")
       (.addEventListener "blur"
                          #(do (validate-all!))))
-  (-> (issuer)
+  (-> (get-element-by-id "issuer")
       (.addEventListener "blur"
                          #(do (validate-all!))))
-  (-> (auth)
+  (-> (get-element-by-id "auth")
       (.addEventListener "blur"
                          #(do (validate-all!))))
   )
