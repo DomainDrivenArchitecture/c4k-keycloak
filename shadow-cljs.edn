@@ -7,11 +7,11 @@
                 [orchestra "2021.01.01-1"]
                 [expound "0.8.9"]]
  :dev-http {8080 "public"}
- :builds       {:frontend {:target :browser
-                           :modules {:main {:init-fn dda.c4k-keycloak.browser/init}}
-                           :release {}
-                           :compiler-options {:optimizations :advanced}}
-                :test {:target    :node-test
-                       :output-to "target/node-tests.js"
-                       :autorun   true
-                       :repl-pprint  true}}}
+ :builds {:frontend {:target :browser
+                     :modules {:main {:init-fn dda.c4k-keycloak.browser/init}}
+                     :release {}
+                     :compiler-options {:optimizations :advanced}}
+          :test {:target    :node-test
+                 :output-to "target/node-tests.js"
+                 :autorun   true
+                 :repl-pprint  true}}}
