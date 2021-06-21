@@ -5,19 +5,16 @@
 
 ## Purpose
 
-c4k-keycloak ....
+c4k-keycloak provides a k8s deployment for keycloak containing:
+* keycloak
+* ingress having a letsencrypt managed certificate
+* postgres database
 
-## Rational
+The package aims to a low load sceanrio.
 
-There are many comparable solutions for creating c4k deployments like helm or kustomize. Why do we need another one?
-* We like the simplicity of kustomize. Yaml in, yaml out, the ability to lint the result and the option to split large yaml files into objects. But a simple overwriting per environment may not be enough ...
-* We like helm packages. A package encapsulates the setup for an application. On the one hand, but on the other hand we don't like the idea of having to program and debug in a template language. We can program much better in real programming languages.
+## Status
 
-Our convention 4 kubernetes c4k-* tools combine the advantages of both approaches:
-* Packages for one application
-* Programming in clojure
-* yaml / edn as input and output, no more magic
-* good validation, integration as api, cli or in the browser
+This is just a POC, database is stored volatile, there is no backup implemented.
 
 ## Try out
 
