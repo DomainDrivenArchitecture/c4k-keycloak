@@ -48,7 +48,6 @@ test-schema:
     paths:
       - target/uberjar
 
-
 report-frontend:
   <<: *cljs
   stage: package
