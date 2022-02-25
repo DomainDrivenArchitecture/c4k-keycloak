@@ -92,11 +92,11 @@ sast:
 include:
   - template: Security/SAST.gitlab-ci.yml
 
-upload-clj-prerelease:
+upload-clj-release:
   <<: *clj
   stage: upload
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_COMMIT_TAG == null'
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_COMMIT_TAG != null'
   script:
     - lein deploy clojars
 
