@@ -2,5 +2,5 @@ fqdn: "keycloak.test.meissa-gmbh.de"
 issuer: "staging"
 mon-cfg:
   grafana-cloud-url: "url-for-your-prom-remote-write-endpoint"
-  k3s-cluster-name: "keycloak"
-  k3s-cluster-stage: "test"
+  cluster-name: "keycloak"
+  cluster-stage: "test"
