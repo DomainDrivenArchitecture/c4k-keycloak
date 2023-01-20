@@ -1,41 +1,46 @@
 (ns dda.c4k-keycloak.core
  (:require
-  [clojure.string :as cs]
   [clojure.spec.alpha :as s]
   #?(:clj [orchestra.core :refer [defn-spec]]
      :cljs [orchestra.core :refer-macros [defn-spec]])
+  [dda.c4k-common.common :as cm]
+  [dda.c4k-common.predicate :as cp]
+  [dda.c4k-common.monitoring :as mon]
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.postgres :as postgres]
   [dda.c4k-keycloak.keycloak :as kc]))
 
 (def default-storage-class :local-path)
 
-(def config-defaults {:issuer :staging})
+(def config-defaults {:issuer "staging"})
 
-(def config? (s/keys :req-un [::fqdn]
-                     :opt-un [::issuer]))
+(s/def ::mon-cfg mon/config?)
+(s/def ::mon-auth mon/auth?)
 
-(def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password]))
+(def config? (s/keys :req-un [::kc/fqdn]
+                     :opt-un [::kc/issuer
+                              ::mon-cfg]))
 
-(defn-spec k8s-objects any?
+(def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password
+                            ::postgres/postgres-db-user ::postgres/postgres-db-password]
+                   :opt-un [::mon-auth]))
+
+(defn-spec k8s-objects cp/map-or-seq?
   [config config?
    auth auth?]
-  (into
-   []
-   (concat [(yaml/to-string (postgres/generate-config {:postgres-size :2gb :db-name "keycloak"}))
-            (yaml/to-string (postgres/generate-secret auth))
-            (yaml/to-string (postgres/generate-pvc {:pv-storage-size-gb 30
-                                                    :pvc-storage-class-name default-storage-class}))
-            (yaml/to-string (postgres/generate-deployment :postgres-image "postgres:14"))
-            (yaml/to-string (postgres/generate-service))
-            (yaml/to-string (kc/generate-secret auth))
-            (yaml/to-string (kc/generate-ingress config))
-            (yaml/to-string (kc/generate-service))
-            (yaml/to-string (kc/generate-deployment))])))
-
-(defn-spec generate any?
-  [my-config config?
-   my-auth auth?]
-  (cs/join
-   "\n---\n"
-   (k8s-objects my-config my-auth)))
+  (map yaml/to-string
+       (filter
+        #(not (nil? %))
+        (cm/concat-vec
+         [(postgres/generate-config {:postgres-size :2gb :db-name "keycloak"})
+          (postgres/generate-secret auth)
+          (postgres/generate-pvc {:pv-storage-size-gb 30
+                                  :pvc-storage-class-name default-storage-class})
+          (postgres/generate-deployment :postgres-image "postgres:14")
+          (postgres/generate-service)
+          (kc/generate-secret auth)
+          (kc/generate-service)
+          (kc/generate-deployment)]
+         (kc/generate-ingress config)
+         (when (:contains? config :mon-cfg)
+           (mon/generate (:mon-cfg config) (:mon-auth auth)))))))
