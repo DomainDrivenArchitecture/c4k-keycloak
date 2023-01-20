@@ -1,7 +1,7 @@
 (ns dda.c4k-keycloak.keycloak
  (:require
   [clojure.spec.alpha :as s]
-  [dda.c4k-keycloak.yaml :as yaml]
+  [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.base64 :as b64]
   [dda.c4k-common.common :as cm]))
 
