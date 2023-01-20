@@ -1,0 +1,7 @@
+keycloak-admin-user: "testuser"
+keycloak-admin-password: "testpassword"
+postgres-db-user: "keycloakuser"
+postgres-db-password: "testdbpassword"
+mon-auth:
+  grafana-cloud-user: "user"
+  grafana-cloud-password: "password"

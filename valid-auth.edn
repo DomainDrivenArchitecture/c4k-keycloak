@@ -1,4 +1,0 @@
-{:keycloak-admin-user "testuser"
- :keycloak-admin-password "testpassword"
- :postgres-db-user "keycloakuser"
- :postgres-db-password "testdbpassword"}

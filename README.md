@@ -26,8 +26,8 @@ Your input will stay in your browser. No server interaction is required.
 
 You will also be able to try out on cli:
 ```
-target/graalvm/c4k-keycloak src/test/resources/valid-config.edn src/test/resources/valid-auth.edn | kubeval -
-target/graalvm/c4k-keycloak src/test/resources/valid-config.edn src/test/resources/valid-auth.edn | kubectl apply -f -
+target/graalvm/c4k-keycloak src/test/resources/keycloak-test/valid-config.edn src/test/resourceskeycloak-test/valid-auth.edn | kubeval -
+target/graalvm/c4k-keycloak src/test/resources/keycloak-test/valid-config.edn src/test/resources/keycloak-test/valid-auth.edn | kubectl apply -f -
 ```
 
 ## License
