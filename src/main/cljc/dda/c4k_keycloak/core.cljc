@@ -12,8 +12,8 @@
 
 (def config-defaults {:issuer :staging})
 
-(def config? (s/keys :req-un [::kc/fqdn]
-                     :opt-un [::kc/issuer]))
+(def config? (s/keys :req-un [::fqdn]
+                     :opt-un [::issuer]))
 
 (def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password]))
 
