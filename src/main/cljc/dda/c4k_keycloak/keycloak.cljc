@@ -40,10 +40,10 @@
 (defn-spec generate-secret cp/map-or-seq?
   [auth auth?]
   (let [{:keys [keycloak-admin-user keycloak-admin-password]} auth]
-  (->
-   (yaml/load-as-edn "keycloak/secret.yaml")
-   (cm/replace-key-value :keycloak-user (b64/encode keycloak-admin-user))
-   (cm/replace-key-value :keycloak-password (b64/encode keycloak-admin-password)))))
+    (->
+     (yaml/load-as-edn "keycloak/secret.yaml")
+     (cm/replace-key-value :keycloak-user (b64/encode keycloak-admin-user))
+     (cm/replace-key-value :keycloak-password (b64/encode keycloak-admin-password)))))
 
 (defn-spec generate-service cp/map-or-seq? []
   (yaml/load-as-edn "keycloak/service.yaml"))
