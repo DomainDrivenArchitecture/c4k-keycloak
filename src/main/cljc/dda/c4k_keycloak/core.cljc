@@ -28,7 +28,6 @@
             (yaml/to-string (postgres/generate-deployment :postgres-image "postgres:14"))
             (yaml/to-string (postgres/generate-service))
             (yaml/to-string (kc/generate-secret (:auth config)))
-            (yaml/to-string (kc/generate-certificate config))
             (yaml/to-string (kc/generate-ingress config))
             (yaml/to-string (kc/generate-service))
             (yaml/to-string (kc/generate-deployment))])))
