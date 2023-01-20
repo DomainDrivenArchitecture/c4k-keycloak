@@ -21,10 +21,10 @@
              :uberjar {:aot :all
                        :main dda.c4k-keycloak.uberjar
                        :uberjar-name "c4k-keycloak-standalone.jar"
-                       :dependencies [[org.clojure/tools.cli "1.0.206"]
-                                      [ch.qos.logback/logback-classic "1.3.0-alpha4"
+                       :dependencies [[org.clojure/tools.cli "1.0.214"]
+                                      [ch.qos.logback/logback-classic "1.4.5"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.0-alpha1"]]}}
+                                      [org.slf4j/jcl-over-slf4j "2.0.6"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
@@ -38,4 +38,8 @@
                       "-jar" "target/uberjar/c4k-keycloak-standalone.jar"
                       "-H:ResourceConfigurationFiles=graalvm-resource-config.json"
                       "-H:Log=registerResource"
-                      "-H:Name=target/graalvm/${:name}"]})
+                      "-H:Name=target/graalvm/${:name}"]
+            "inst" ["shell"
+                    "sh"
+                    "-c"
+                    "lein uberjar && sudo install -m=755 target/uberjar/c4k-keycloak-standalone.jar /usr/local/bin/c4k-keycloak-standalone.jar"]})
