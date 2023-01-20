@@ -18,16 +18,17 @@
 (def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password]))
 
 (defn-spec k8s-objects any?
-  [config (s/merge config? auth?)]
+  [config config?
+   auth auth?]
   (into
    []
    (concat [(yaml/to-string (postgres/generate-config {:postgres-size :2gb :db-name "keycloak"}))
-            (yaml/to-string (postgres/generate-secret config))
+            (yaml/to-string (postgres/generate-secret auth))
             (yaml/to-string (postgres/generate-pvc {:pv-storage-size-gb 30
                                                     :pvc-storage-class-name default-storage-class}))
             (yaml/to-string (postgres/generate-deployment :postgres-image "postgres:14"))
             (yaml/to-string (postgres/generate-service))
-            (yaml/to-string (kc/generate-secret (:auth config)))
+            (yaml/to-string (kc/generate-secret auth))
             (yaml/to-string (kc/generate-ingress config))
             (yaml/to-string (kc/generate-service))
             (yaml/to-string (kc/generate-deployment))])))
@@ -35,7 +36,6 @@
 (defn-spec generate any?
   [my-config config?
    my-auth auth?]
-  (let [resulting-config (merge config-defaults my-config my-auth)]
-    (cs/join
-     "\n---\n"
-     (k8s-objects resulting-config))))
+  (cs/join
+   "\n---\n"
+   (k8s-objects my-config my-auth)))
