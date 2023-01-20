@@ -2,7 +2,10 @@
   (:require
    #?(:clj [clojure.test :refer [deftest is are testing run-tests]]
       :cljs [cljs.test :refer-macros [deftest is are testing run-tests]])
+   [clojure.spec.test.alpha :as st]
    [dda.c4k-keycloak.keycloak :as cut]))
+
+(st/instrument)
 
 (deftest should-generate-secret
   (is (= {:apiVersion "v1"
@@ -13,56 +16,6 @@
           {:keycloak-user "dXNlcg=="
            :keycloak-password "cGFzc3dvcmQ="}}
          (cut/generate-secret {:keycloak-admin-user "user" :keycloak-admin-password "password"}))))
-
-(deftest should-generate-certificate
-  (is (= {:apiVersion "cert-manager.io/v1alpha2"
-          :kind "Certificate"
-          :metadata {:name "keycloak-cert", :namespace "default"}
-          :spec
-          {:secretName "keycloak-secret"
-           :commonName "test.de"
-           :dnsNames ["test.de"]
-           :issuerRef {:name "letsencrypt-prod-issuer", :kind "ClusterIssuer"}}}
-         (cut/generate-certificate {:fqdn "test.de" :issuer :prod} ))))
-
-(deftest should-generate-ingress-yaml-with-default-issuer
-  (is (= {:apiVersion "networking.k8s.io/v1beta1"
-           :kind "Ingress"
-           :metadata
-           {:name "ingress-cloud"
-            :annotations
-            {:cert-manager.io/cluster-issuer "letsencrypt-staging-issuer"
-             :nginx.ingress.kubernetes.io/proxy-body-size "256m"
-             :nginx.ingress.kubernetes.io/ssl-redirect "true"
-             :nginx.ingress.kubernetes.io/rewrite-target "/"
-             :nginx.ingress.kubernetes.io/proxy-connect-timeout "300"
-             :nginx.ingress.kubernetes.io/proxy-send-timeout "300"
-             :nginx.ingress.kubernetes.io/proxy-read-timeout "300"}
-            :namespace "default"}
-           :spec
-           {:tls [{:hosts ["test.de"] :secretName "keycloak-secret"}]
-            :rules [{:host "test.de", :http {:paths [{:backend {:serviceName "keycloak", :servicePort 8080}}]}}]}}
-          (cut/generate-ingress {:fqdn "test.de"}))))
-
-(deftest should-generate-ingress-yaml-with-prod-issuer
-  (is (= {:apiVersion "networking.k8s.io/v1beta1"
-          :kind "Ingress"
-          :metadata
-          {:name "ingress-cloud"
-           :annotations
-           {:cert-manager.io/cluster-issuer "letsencrypt-prod-issuer"
-            :nginx.ingress.kubernetes.io/proxy-body-size "256m"
-            :nginx.ingress.kubernetes.io/ssl-redirect "true"
-            :nginx.ingress.kubernetes.io/rewrite-target "/"
-            :nginx.ingress.kubernetes.io/proxy-connect-timeout "300"
-            :nginx.ingress.kubernetes.io/proxy-send-timeout "300"
-            :nginx.ingress.kubernetes.io/proxy-read-timeout "300"}
-           :namespace "default"}
-          :spec
-          {:tls [{:hosts ["test.de"], :secretName "keycloak-secret"}]
-           :rules '({:host "test.de", :http {:paths [{:backend {:serviceName "keycloak", :servicePort 8080}}]}})}}
-         (cut/generate-ingress {:fqdn "test.de"
-                                :issuer :prod}))))
 
 (deftest should-generate-deployment
   (is (= {:apiVersion "apps/v1"
