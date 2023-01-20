@@ -11,43 +11,7 @@
 </head>
 
 <body>
-  <div class="container jumbotron">
-    <form class="needs-validation" id="form">
-      <label for="fqdn" class="form-label">Your fqdn:</label>
-      <input class="form-control" type="text" name="fqdn" id="fqdn" value="your.domain.com">
-      <div class="invalid-feedback">
-        <pre id="fqdn-validation"></pre>
-      </div>
-      <br>
-      <label for="issuer" class="form-label">(Optional) Your issuer prod/staging:</label>
-      <input class="form-control" type="text" name="issuer" id="issuer" value="">
-      <div class="invalid-feedback">
-        <pre id="issuer-validation"></pre>
-      </div>
-      <br><br>
-
-      <label for="auth" class="form-label">Your auth.edn:</label>
-      <textarea name="auth" id="auth" class="form-control" rows="5">
-{:keycloak-admin-user "testuser"
-:keycloak-admin-password "testpassword"
-:postgres-db-user "keycloakuser"
-:postgres-db-password "testdbpassword"}
-      </textarea>
-      <div class="invalid-feedback">
-        <pre id="auth-validation"></pre>
-      </div>
-      <br><br>
-      <button type="button" id="generate-button" class="btn btn-primary">
-        Generate c4k yaml
-      </button>
-    </form><br><br>
-    <div id="c4k-keycloak-output">
-      <label for="output" class="form-label">Your c4k deployment.yaml:</label>
-      <textarea name="output" id="output" class="form-control" rows="25">
-      </textarea>
-    </div>
-
-  </div>
+  <div id="c4k-content"></div>
   <script src="js/main.js"></script>
 </body>
 
