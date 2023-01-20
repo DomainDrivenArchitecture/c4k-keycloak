@@ -24,9 +24,11 @@
        "credentials"
        (br/generate-text-area "auth" "Your auth.edn:" 
                               "{:keycloak-admin-user \"keycloak\"
-                                :keycloak-admin-password \"adminpassword\"}
-                                :mon-auth {:grafana-cloud-user \"your-user-id\"
-                                           :grafana-cloud-password \"your-cloud-password\"}"
+ :keycloak-admin-password \"adminpassword\"
+ :postgres-db-user \"keycloakuser\"
+ :postgres-db-password \"testdbpassword\"
+ :mon-auth {:grafana-cloud-user \"your-user-id\"
+                   :grafana-cloud-password \"your-cloud-password\"}}"
                               "5"))
       [(br/generate-br)]
       (br/generate-button "generate-button" "Generate c4k yaml")))]
