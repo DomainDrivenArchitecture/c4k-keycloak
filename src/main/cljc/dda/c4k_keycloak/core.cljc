@@ -15,8 +15,7 @@
 (def config? (s/keys :req-un [::kc/fqdn]
                      :opt-un [::kc/issuer]))
 
-(def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password
-                            ::postgres/postgres-db-user ::postgres/postgres-db-password]))
+(def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password]))
 
 (defn-spec k8s-objects any?
   [config (s/merge config? auth?)]
