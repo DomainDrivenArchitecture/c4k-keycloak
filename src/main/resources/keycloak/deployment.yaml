@@ -17,8 +17,21 @@ spec:
     spec:
       containers:
       - name: keycloak
-        image: quay.io/keycloak/keycloak:13.0.0
+        image: quay.io/keycloak/keycloak:20.0.3
+        imagePullPolicy: IfNotPresent
+        args:
+        - start
+        volumeMounts:
+        - name: keycloak-cert
+          mountPath: /etc/certs
+          readOnly: true
         env:
+        - name: HTTPS_CERTIFICATE_FILE
+          value: /etc/certs/tls.crt
+        - name: HTTPS_CERTIFICATE_KEY_FILE
+          value: /etc/certs/tls.key
+        - name: HOSTNAME
+          value: FQDN
         - name: DB_VENDOR
           value: POSTGRES
         - name: DB_ADDR
@@ -59,3 +72,13 @@ spec:
           httpGet:
             path: /auth/realms/master
             port: 8080
+      volumes:
+        - name: keycloak-cert
+          secret:
+            secretName: keycloak
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+

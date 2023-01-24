@@ -48,5 +48,10 @@
 (defn-spec generate-service cp/map-or-seq? []
   (yaml/load-as-edn "keycloak/service.yaml"))
 
-(defn-spec generate-deployment cp/map-or-seq? []
-  (yaml/load-as-edn "keycloak/deployment.yaml"))
+(defn-spec generate-deployment cp/map-or-seq?
+  [config config?]
+  (let [{:keys [fqdn]} config]
+    (-> 
+     (yaml/load-as-edn "keycloak/deployment.yaml")
+     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
+  
