@@ -40,7 +40,7 @@
           (postgres/generate-service)
           (kc/generate-secret auth)
           (kc/generate-service)
-          (kc/generate-deployment)]
+          (kc/generate-deployment config)]
          (kc/generate-ingress config)
          (when (:contains? config :mon-cfg)
            (mon/generate (:mon-cfg config) (:mon-auth auth)))))))

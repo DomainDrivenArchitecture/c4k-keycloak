@@ -26,11 +26,11 @@ spec:
           mountPath: /etc/certs
           readOnly: true
         env:
-        - name: HTTPS_CERTIFICATE_FILE
+        - name: KC_HTTPS_CERTIFICATE_FILE
           value: /etc/certs/tls.crt
-        - name: HTTPS_CERTIFICATE_KEY_FILE
+        - name: KC_HTTPS_CERTIFICATE_KEY_FILE
           value: /etc/certs/tls.key
-        - name: HOSTNAME
+        - name: KC_HOSTNAME
           value: FQDN
         - name: DB_VENDOR
           value: POSTGRES
