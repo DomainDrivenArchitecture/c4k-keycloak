@@ -21,9 +21,7 @@
   (is (= {:apiVersion "apps/v1"
           :kind "Deployment"
           :metadata
-          {:name "keycloak"
-           :namespace "default"
-           :labels {:app "keycloak"}}
+          {:name "keycloak" :namespace "default" :labels {:app "keycloak"}},
           :spec
           {:replicas 1
            :selector {:matchLabels {:app "keycloak"}}
@@ -32,11 +30,22 @@
             :spec
             {:containers
              [{:name "keycloak"
-               :image "quay.io/keycloak/keycloak:13.0.0"
+               :image "quay.io/keycloak/keycloak:20.0.3"
+               :imagePullPolicy "IfNotPresent"
+               :args ["start"]
+               :volumeMounts
+               [{:name "keycloak-cert"
+                 :mountPath "/etc/certs"
+                 :readOnly true}]
                :env
-               [{:name "DB_VENDOR", :value "POSTGRES"}
-                {:name "DB_ADDR", :value "postgresql-service"}
-                {:name "DB_SCHEMA", :value "public"}
+               [{:name "KC_HTTPS_CERTIFICATE_FILE"
+                 :value "/etc/certs/tls.crt"}
+                {:name "KC_HTTPS_CERTIFICATE_KEY_FILE"
+                 :value "/etc/certs/tls.key"}
+                {:name "KC_HOSTNAME" :value "test.de"}
+                {:name "DB_VENDOR" :value "POSTGRES"}
+                {:name "DB_ADDR" :value "postgresql-service"}
+                {:name "DB_SCHEMA" :value "public"}
                 {:name "DB_DATABASE"
                  :valueFrom
                  {:configMapKeyRef
@@ -48,8 +57,7 @@
                 {:name "DB_PASSWORD"
                  :valueFrom
                  {:secretKeyRef
-                  {:name "postgres-secret"
-                   :key "postgres-password"}}}
+                  {:name "postgres-secret" :key "postgres-password"}}}
                 {:name "PROXY_ADDRESS_FORWARDING", :value "true"}
                 {:name "KEYCLOAK_USER"
                  :valueFrom
@@ -58,10 +66,15 @@
                 {:name "KEYCLOAK_PASSWORD"
                  :valueFrom
                  {:secretKeyRef
-                  {:name "keycloak-secret"
-                   :key "keycloak-password"}}}]
-               :ports [{:name "http", :containerPort 8080}]
+                  {:name "keycloak-secret" :key "keycloak-password"}}}]
+               :ports [{:name "http" :containerPort 8080}]
                :readinessProbe
-               {:httpGet
-                {:path "/auth/realms/master", :port 8080}}}]}}}}
-         (cut/generate-deployment))))
+               {:httpGet {:path "/auth/realms/master", :port 8080}}}]
+             :volumes
+             [{:name "keycloak-cert"
+               :secret
+               {:secretName "keycloak"
+                :items
+                [{:key "tls.crt" :path "tls.crt"}
+                 {:key "tls.key" :path "tls.key"}]}}]}}}}
+         (cut/generate-deployment {:fqdn "test.de"}))))
