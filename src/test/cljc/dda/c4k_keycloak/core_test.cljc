@@ -16,5 +16,6 @@
 
 ;; TODO: 2023.01.27 - jem: may not validate k3s-cluster-name entries ... find out what's wrong.
 (deftest validate-valid-resources
-  (is (s/valid? ::cut/config (yaml/load-as-edn "keycloak-test/valid-config.yaml")))
-  (is (s/valid? cut/auth? (yaml/load-as-edn "keycloak-test/valid-auth.yaml"))))
+  (is (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/valid-config.yaml")))
+  (is (s/valid? cut/auth? (yaml/load-as-edn "keycloak-test/valid-auth.yaml")))
+  (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-config.yaml")))))

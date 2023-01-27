@@ -3,4 +3,4 @@ issuer: "staging"
 mon-cfg:
   grafana-cloud-url: "url-for-your-prom-remote-write-endpoint"
   cluster-name: "keycloak"
-  cluster-stage: :test
+  cluster-stage: "test"
