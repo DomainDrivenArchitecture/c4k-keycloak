@@ -14,19 +14,16 @@
 
 (def config-defaults {:issuer "staging"})
 
-(s/def ::mon-cfg mon/config?)
-(s/def ::mon-auth mon/auth?)
-
-(def config? (s/keys :req-un [::kc/fqdn]
-                     :opt-un [::kc/issuer
-                              ::mon-cfg]))
+(s/def ::config (s/keys :req-un [::kc/fqdn]
+                        :opt-un [::kc/issuer
+                                 ::mon/config]))
 
 (def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password
                             ::postgres/postgres-db-user ::postgres/postgres-db-password]
-                   :opt-un [::mon-auth]))
+                   :opt-un [::mon/auth]))
 
 (defn-spec k8s-objects cp/map-or-seq?
-  [config config?
+  [config ::config
    auth auth?]
   (map yaml/to-string
        (filter
