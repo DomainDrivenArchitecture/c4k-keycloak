@@ -20,7 +20,7 @@
 
 (def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password
                             ::postgres/postgres-db-user ::postgres/postgres-db-password]
-                   :opt-un [::mon/auth]))
+                   :opt-un [::mon/mon-auth]))
 
 (defn-spec k8s-objects cp/map-or-seq?
   [config config?

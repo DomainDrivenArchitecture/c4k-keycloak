@@ -17,4 +17,5 @@
 (deftest validate-valid-resources
   (is (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/valid-config.yaml")))
   (is (s/valid? cut/auth? (yaml/load-as-edn "keycloak-test/valid-auth.yaml")))
-  (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-config.yaml")))))
+  (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-config.yaml"))))
+  (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-auth.yaml")))))
