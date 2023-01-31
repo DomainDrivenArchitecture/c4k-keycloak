@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/c4k-keycloak "0.2.4"
+(defproject org.domaindrivenarchitecture/c4k-keycloak "1.0.1-SNAPSHOT"
   :description "keycloak c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
