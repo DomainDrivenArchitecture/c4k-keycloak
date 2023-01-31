@@ -9,9 +9,5 @@ spec:
   - name: "http"
     port: 80
     targetPort: 8080
-  # TODO: 2023.01.27 - jem: only http is needed to be exposed
-  - name: "https"
-    port: 443
-    targetPort: 8443
   selector:
     app: keycloak
