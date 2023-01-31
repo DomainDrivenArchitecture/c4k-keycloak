@@ -27,3 +27,5 @@ my-auth.edn
 
 .clj-kondo/
 .lsp/
+
+build-and-move-frontend.sh

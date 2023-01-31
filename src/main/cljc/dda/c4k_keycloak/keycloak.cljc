@@ -18,14 +18,15 @@
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer]))
 
-(def auth? (s/keys :req-un [::keycloak-admin-user ::keycloak-admin-password]))
+(def auth? (s/keys :req-un [::keycloak-admin-user 
+                            ::keycloak-admin-password]))
 
 #?(:cljs
    (defmethod yaml/load-resource :keycloak [resource-name]
      (case resource-name
        "keycloak/deployment.yaml" (rc/inline "keycloak/deployment.yaml")
        "keycloak/secret.yaml" (rc/inline "keycloak/secret.yaml")
-       "keycloak/service.yaml" (rc/inline "keycloak/service.yaml")
+       "keycloak/service.yaml" (rc/inline "keycloak/service.yaml")       
        (throw (js/Error. "Undefined Resource!")))))
 
 (defn-spec generate-ingress cp/map-or-seq?
