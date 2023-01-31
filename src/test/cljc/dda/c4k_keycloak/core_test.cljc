@@ -12,10 +12,12 @@
      (case resource-name
        "keycloak-test/valid-auth.yaml"   (rc/inline "keycloak-test/valid-auth.yaml")
        "keycloak-test/valid-config.yaml" (rc/inline "keycloak-test/valid-config.yaml")
+       "keycloak-test/invalid-config.yaml" (rc/inline "keycloak-test/invalid-config.yaml")
+       "keycloak-test/invalid-auth.yaml" (rc/inline "keycloak-test/invalid-auth.yaml")
        (throw (js/Error. "Undefined Resource!")))))
 
 (deftest validate-valid-resources
   (is (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/valid-config.yaml")))
   (is (s/valid? cut/auth? (yaml/load-as-edn "keycloak-test/valid-auth.yaml")))
   (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-config.yaml"))))
-  (is (not (s/valid? cut/config? (yaml/load-as-edn "keycloak-test/invalid-auth.yaml")))))
+  (is (not (s/valid? cut/auth? (yaml/load-as-edn "keycloak-test/invalid-auth.yaml")))))
