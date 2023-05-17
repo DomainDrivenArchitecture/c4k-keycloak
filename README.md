@@ -30,6 +30,16 @@ target/graalvm/c4k-keycloak src/test/resources/keycloak-test/valid-config.edn sr
 target/graalvm/c4k-keycloak src/test/resources/keycloak-test/valid-config.edn src/test/resources/keycloak-test/valid-auth.edn | kubectl apply -f -
 ```
 
+## Development & mirrors
+
+Development happens at: https://repo.prod.meissa.de/meissa/c4k-keycloak
+
+Mirrors are:
+
+* https://gitlab.com/domaindrivenarchitecture/c4k-keycloak (issues and PR, CI)
+
+For more details about our repository model see: https://repo.prod.meissa.de/meissa/federate-your-repos
+
 ## License
 
 Copyright © 2021 meissa GmbH
