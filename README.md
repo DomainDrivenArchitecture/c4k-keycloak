@@ -37,6 +37,7 @@ Development happens at: https://repo.prod.meissa.de/meissa/c4k-keycloak
 Mirrors are:
 
 * https://gitlab.com/domaindrivenarchitecture/c4k-keycloak (issues and PR, CI)
+* https://github.com/DomainDrivenArchitecture/c4k-keycloak
 
 For more details about our repository model see: https://repo.prod.meissa.de/meissa/federate-your-repos
 
