@@ -124,6 +124,7 @@ def package_native(project):
         "--features=clj_easy.graal_build_time.InitClojureClasses " +
         "-jar target/uberjar/" + project.name + "-standalone.jar " +
         "-march=compatibility " +
+        "-H:+UnlockExperimentalVMOptions " +
         "-H:IncludeResources=.*.yaml " +
         "-H:IncludeResources=logback.xml " +
         "-H:Log=registerResource:verbose " +
