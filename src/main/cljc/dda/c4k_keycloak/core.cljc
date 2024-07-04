@@ -8,7 +8,8 @@
   [dda.c4k-common.monitoring :as mon]
   [dda.c4k-common.yaml :as yaml]
   [dda.c4k-common.postgres :as postgres]
-  [dda.c4k-keycloak.keycloak :as kc]))
+  [dda.c4k-keycloak.keycloak :as kc]
+  [dda.c4k-common.namespace :as ns]))
 
 (def default-storage-class :local-path)
 
@@ -29,15 +30,17 @@
        (filter
         #(not (nil? %))
         (cm/concat-vec
-         [(postgres/generate-config {:postgres-size :2gb :db-name "keycloak"})
-          (postgres/generate-secret auth)
-          (postgres/generate-pvc {:pv-storage-size-gb 30
-                                  :pvc-storage-class-name default-storage-class})
-          (postgres/generate-deployment :postgres-image "postgres:14")
-          (postgres/generate-service)
-          (kc/generate-secret auth)
+         (ns/generate (merge {:namespace "keycloak"} config))
+         (postgres/generate (merge {:postgres-image "postgres:14"
+                                    :postgres-size :2gb
+                                    :db-name "keycloak"
+                                    :pv-storage-size-gb 30
+                                    :pvc-storage-class-name default-storage-class
+                                    :namespace "keycloak"})
+                            auth)
+         [(kc/generate-secret auth)
           (kc/generate-service)
           (kc/generate-deployment config)]
-         (kc/generate-ingress config)
+         (kc/generate-ingress (merge {:namespace "keycloak"} config))
          (when (:contains? config :mon-cfg)
            (mon/generate (:mon-cfg config) (:mon-auth auth)))))))
