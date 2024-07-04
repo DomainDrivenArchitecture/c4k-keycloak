@@ -3,13 +3,13 @@
 ## clj setup
 
 ### install leiningen
-```
+```bash
 sudo apt install leiningen
 ```
 or manually using Instructions on https://leiningen.org/#install
 
 ### install vscode + extensions
-```
+```bash
 sudo snap install code
 ```
 or with packages from https://code.visualstudio.com/Download
@@ -18,7 +18,7 @@ install extension "Calva: Clojure & ClojureScript Interactive Programming"
 
 ## cljs / js-dev setup
 
-```
+```bash
 sudo apt install npm
 sudo npm install -g npx
 
@@ -32,47 +32,44 @@ npx shadow-cljs compile test
 
 ### create frontend script
 
-```
+```bash
 npx shadow-cljs release frontend
 ```
 
 ## graalvm-setup
 
-```
-curl -LO  https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-linux-amd64-21.0.0.2.tar.gz 
+```bash
+curl -LO  https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz
 
 # unpack
-tar -xzf graalvm-ce-java11-linux-amd64-21.0.0.2.tar.gz 
+tar -xzf graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz
 
-sudo mv graalvm-ce-java11-21.0.0.2 /usr/lib/jvm/
-sudo ln -s /usr/lib/jvm/graalvm-ce-java11-21.0.0.2 /usr/lib/jvm/graalvm
-sudo ln -s /usr/lib/jvm/graalvm/bin/gu /usr/local/bin
-sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/graalvm/bin/java 2
+sudo mv graalvm-community-openjdk-21.0.2+13.1 /usr/lib/jvm/
+sudo ln -s /usr/lib/jvm/graalvm-community-openjdk-21.0.2+13.1 /usr/lib/jvm/graalvm-21
+sudo ln -s /usr/lib/jvm/graalvm-21/bin/gu /usr/local/bin
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/graalvm-21/bin/java 2
 sudo update-alternatives --config java
-
-# install native-image in graalvm-ce-java11-linux-amd64-21.0.0.2/bin
-sudo gu install native-image
-sudo ln -s /usr/lib/jvm/graalvm/bin/native-image /usr/local/bin
+sudo ln -s /usr/lib/jvm/graalvm-21/bin/native-image /usr/local/bin
 
 # deps
 sudo apt-get install build-essential libz-dev zlib1g-dev
 
 # build
-cd ~/repo/dda/c4k-keycloak
+cd ~/repo/c4k/c4k-keycloak
 lein uberjar
 mkdir -p target/graalvm
 lein native
 
 # execute
-./target/graalvm/c4k-keycloak -h
-./target/graalvm/c4k-keycloak src/test/resources/valid-config.edn src/test/resources/valid-auth.edn 
-./target/graalvm/c4k-keycloak src/test/resources/invalid-config.edn src/test/resources/invalid-auth.edn
+./target/graalvm/c4k-cloud -h
+./target/graalvm/c4k-cloud src/test/resources/valid-config.edn src/test/resources/valid-auth.edn 
+./target/graalvm/c4k-cloud src/test/resources/invalid-config.edn src/test/resources/invalid-auth.edn
 ```
 
 ## c4k-setup
 ### install kubectl
 
-```
+```bash
 sudo -i
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
@@ -83,7 +80,7 @@ kubectl completion bash >> /etc/bash_completion.d/kubernetes
 
 ### install kubeconform
 
-```
+```bash
 curl -Lo /tmp/kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.4.7/kubeconform-linux-amd64.tar.gz
 tar -xf /tmp/kubeconform.tar.gz
 sudo cp kubeconform /usr/local/bin
@@ -91,7 +88,7 @@ sudo cp kubeconform /usr/local/bin
 
 ### remote access to c4k
 
-```
+```bash
 scp -r root@devops.test.meissa-gmbh.de:/home/c4k/.kube ~/
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@devops.test.meissa-gmbh.de -L 8002:localhost:8002 -L 6443:192.168.5.1:6443
 
@@ -104,7 +101,7 @@ kubectl get pods
 
 ### deploy keycloak
 
-```
+```bash
 java -jar target/uberjar/c4k-keycloak-standalone.jar valid-config.edn valid-auth.edn | kubeconform --kubernetes-version 1.19.0 --strict --skip Certificate -
 java -jar target/uberjar/c4k-keycloak-standalone.jar valid-config.edn my-auth.edn | kubectl apply -f -
 ```

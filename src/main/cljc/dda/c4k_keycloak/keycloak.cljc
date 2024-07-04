@@ -1,7 +1,7 @@
 (ns dda.c4k-keycloak.keycloak
  (:require
   [clojure.spec.alpha :as s]
-  #?(:cljs [shadow.resource :as rc])
+  #?(:cljs [dda.c4k-common.macros :refer-macros [inline-resources]])
   #?(:clj [orchestra.core :refer [defn-spec]]
      :cljs [orchestra.core :refer-macros [defn-spec]])
   [dda.c4k-common.yaml :as yaml]
@@ -23,11 +23,7 @@
 
 #?(:cljs
    (defmethod yaml/load-resource :keycloak [resource-name]
-     (case resource-name
-       "keycloak/deployment.yaml" (rc/inline "keycloak/deployment.yaml")
-       "keycloak/secret.yaml" (rc/inline "keycloak/secret.yaml")
-       "keycloak/service.yaml" (rc/inline "keycloak/service.yaml")       
-       (throw (js/Error. "Undefined Resource!")))))
+     (get (inline-resources "keycloak") resource-name)))
 
 (defn-spec generate-ingress cp/map-or-seq?
   [config config?]

@@ -10,7 +10,7 @@
 (deftest should-generate-secret
   (is (= {:apiVersion "v1"
           :kind "Secret"
-          :metadata {:name "keycloak-secret"}
+          :metadata {:name "keycloak-secret", :namespace "keycloak"}
           :type "Opaque"
           :data
           {:keycloak-user "dXNlcg=="
@@ -21,7 +21,7 @@
   (is (= {:apiVersion "apps/v1",
           :kind "Deployment",
           :metadata
-          {:name "keycloak", :namespace "default", :labels {:app "keycloak"}},
+          {:name "keycloak", :namespace "keycloak", :labels {:app "keycloak"}},
           :spec
           {:replicas 1,
            :selector {:matchLabels {:app "keycloak"}},

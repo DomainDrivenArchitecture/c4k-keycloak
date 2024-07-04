@@ -4,6 +4,8 @@
    [dda.c4k-common.uberjar :as uberjar]
    [dda.c4k-keycloak.core :as core]))
 
+(set! *warn-on-reflection* true)
+
 (defn -main [& cmd-args]
   (uberjar/main-common
    "c4k-keycloak"
