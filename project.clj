@@ -1,11 +1,11 @@
-(defproject org.domaindrivenarchitecture/c4k-keycloak "1.0.2-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/c4k-keycloak "1.1.0"
   :description "keycloak c4k-installation package"
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
-  :dependencies [[org.clojure/clojure "1.11.1"]
-                 [org.clojure/tools.reader "1.3.6"]
-                 [org.domaindrivenarchitecture/c4k-common-clj "6.3.1"]]
+  :dependencies [[org.clojure/clojure "1.11.3"]
+                 [org.clojure/tools.reader "1.4.2"]
+                 [org.domaindrivenarchitecture/c4k-common-clj "6.4.1"]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
                  "src/main/clj"]
@@ -21,10 +21,10 @@
              :uberjar {:aot :all
                        :main dda.c4k-keycloak.uberjar
                        :uberjar-name "c4k-keycloak-standalone.jar"
-                       :dependencies [[org.clojure/tools.cli "1.0.219"]
-                                      [ch.qos.logback/logback-classic "1.4.14"
+                       :dependencies [[org.clojure/tools.cli "1.1.230"]
+                                      [ch.qos.logback/logback-classic "1.5.6"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.12"]
+                                      [org.slf4j/jcl-over-slf4j "2.0.13"]
                                       [com.github.clj-easy/graal-build-time "1.0.5"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]

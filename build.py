@@ -18,6 +18,7 @@ def initialize(project):
         "stage": "notused",
         "project_root_path": PROJECT_ROOT_PATH,
         "build_types": [],
+        "release_main_branch": "master",
         "mixin_types": ["RELEASE"],
         "release_primary_build_file": "project.clj",
         "release_secondary_build_files": [
