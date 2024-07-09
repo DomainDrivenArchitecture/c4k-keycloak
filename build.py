@@ -23,8 +23,6 @@ def initialize(project):
         "release_primary_build_file": "project.clj",
         "release_secondary_build_files": [
             "package.json",
-            "infrastructure/backup/build.py",
-            "infrastructure/federated/build.py",
             ],
         "release_artifact_server_url": "https://repo.prod.meissa.de",
         "release_organisation": "meissa",
