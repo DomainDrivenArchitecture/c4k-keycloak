@@ -4,7 +4,7 @@ metadata:
   name: keycloak
   labels:
     service: keycloak
-  namespace: keycloak
+  namespace: NAMESPACE
 spec:
   ports:
   - name: "http"
