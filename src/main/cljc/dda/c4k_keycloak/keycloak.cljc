@@ -11,12 +11,14 @@
   [dda.c4k-common.predicate :as cp]))
 
 (s/def ::fqdn cp/fqdn-string?)
+(s/def ::namespace string?)
 (s/def ::issuer cp/letsencrypt-issuer?)
 (s/def ::keycloak-admin-user cp/bash-env-string?)
 (s/def ::keycloak-admin-password cp/bash-env-string?)
 
 (def config? (s/keys :req-un [::fqdn]
-                     :opt-un [::issuer]))
+                     :opt-un [::issuer
+                              ::namespace]))
 
 (def auth? (s/keys :req-un [::keycloak-admin-user 
                             ::keycloak-admin-password]))
