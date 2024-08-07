@@ -39,8 +39,8 @@
         (cm/concat-vec
          (ns/generate config)
          (postgres/generate config auth)
-         [(kc/generate-secret auth)
-          (kc/generate-service)
+         [(kc/generate-secret config auth)
+          (kc/generate-service config)
           (kc/generate-deployment config)]
          (kc/generate-ingress config)
          (when (:contains? config :mon-cfg)
