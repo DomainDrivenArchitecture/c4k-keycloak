@@ -13,11 +13,18 @@
 
 (def default-storage-class :local-path)
 
-(def config-defaults {:issuer "staging"})
+(def config-defaults {:issuer "staging",
+                      :namespace "keycloak"
+                      :postgres-image "postgres:14"
+                      :postgres-size :2gb
+                      :db-name "keycloak"
+                      :pv-storage-size-gb 30
+                      :pvc-storage-class-name default-storage-class})
 
 (def config? (s/keys :req-un [::kc/fqdn]
                      :opt-un [::kc/issuer
-                              ::mon/mon-cfg]))
+                              ::mon/mon-cfg
+                              ::kc/namespace]))
 
 (def auth? (s/keys :req-un [::kc/keycloak-admin-user ::kc/keycloak-admin-password
                             ::postgres/postgres-db-user ::postgres/postgres-db-password]
@@ -30,17 +37,11 @@
        (filter
         #(not (nil? %))
         (cm/concat-vec
-         (ns/generate (merge {:namespace "keycloak"} config))
-         (postgres/generate (merge {:postgres-image "postgres:14"
-                                    :postgres-size :2gb
-                                    :db-name "keycloak"
-                                    :pv-storage-size-gb 30
-                                    :pvc-storage-class-name default-storage-class
-                                    :namespace "keycloak"})
-                            auth)
-         [(kc/generate-secret auth)
-          (kc/generate-service)
+         (ns/generate config)
+         (postgres/generate config auth)
+         [(kc/generate-secret config auth)
+          (kc/generate-service config)
           (kc/generate-deployment config)]
-         (kc/generate-ingress (merge {:namespace "keycloak"} config))
+         (kc/generate-ingress config)
          (when (:contains? config :mon-cfg)
            (mon/generate (:mon-cfg config) (:mon-auth auth)))))))

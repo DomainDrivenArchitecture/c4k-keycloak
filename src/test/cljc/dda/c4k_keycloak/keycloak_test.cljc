@@ -15,7 +15,7 @@
           :data
           {:keycloak-user "dXNlcg=="
            :keycloak-password "cGFzc3dvcmQ="}}
-         (cut/generate-secret {:keycloak-admin-user "user" :keycloak-admin-password "password"}))))
+         (cut/generate-secret {:namespace "keycloak" :fqdn "test.de"} {:keycloak-admin-user "user" :keycloak-admin-password "password"}))))
 
 (deftest should-generate-deployment
   (is (= {:apiVersion "apps/v1",
@@ -75,4 +75,4 @@
                 :items
                 [{:key "tls.crt", :path "tls.crt"}
                  {:key "tls.key", :path "tls.key"}]}}]}}}}
-         (cut/generate-deployment {:fqdn "test.de"}))))
+         (cut/generate-deployment {:fqdn "test.de" :namespace "keycloak"}))))

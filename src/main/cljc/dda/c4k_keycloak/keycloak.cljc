@@ -11,12 +11,14 @@
   [dda.c4k-common.predicate :as cp]))
 
 (s/def ::fqdn cp/fqdn-string?)
+(s/def ::namespace string?)
 (s/def ::issuer cp/letsencrypt-issuer?)
 (s/def ::keycloak-admin-user cp/bash-env-string?)
 (s/def ::keycloak-admin-password cp/bash-env-string?)
 
 (def config? (s/keys :req-un [::fqdn]
-                     :opt-un [::issuer]))
+                     :opt-un [::issuer
+                              ::namespace]))
 
 (def auth? (s/keys :req-un [::keycloak-admin-user 
                             ::keycloak-admin-password]))
@@ -35,20 +37,28 @@
     config)))
 
 (defn-spec generate-secret cp/map-or-seq?
-  [auth auth?]
-  (let [{:keys [keycloak-admin-user keycloak-admin-password]} auth]
+  [config config?
+   auth auth?]
+  (let [{:keys [namespace]} config
+        {:keys [keycloak-admin-user keycloak-admin-password]} auth]
     (->
      (yaml/load-as-edn "keycloak/secret.yaml")
+     (cm/replace-all-matching "NAMESPACE" namespace)
      (cm/replace-key-value :keycloak-user (b64/encode keycloak-admin-user))
      (cm/replace-key-value :keycloak-password (b64/encode keycloak-admin-password)))))
 
-(defn-spec generate-service cp/map-or-seq? []
-  (yaml/load-as-edn "keycloak/service.yaml"))
+(defn-spec generate-service cp/map-or-seq? 
+  [config config?]
+  (let [{:keys [namespace]} config]
+    (->
+     (yaml/load-as-edn "keycloak/service.yaml")
+     (cm/replace-all-matching "NAMESPACE" namespace))))
 
 (defn-spec generate-deployment cp/map-or-seq?
   [config config?]
-  (let [{:keys [fqdn]} config]
+  (let [{:keys [fqdn namespace]} config]
     (-> 
      (yaml/load-as-edn "keycloak/deployment.yaml")
+     (cm/replace-all-matching "NAMESPACE" namespace)
      (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
   
