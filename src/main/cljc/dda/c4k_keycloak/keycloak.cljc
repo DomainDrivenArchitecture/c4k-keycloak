@@ -49,8 +49,7 @@
 
 (defn-spec generate-service cp/map-or-seq? 
   [config config?]
-  (let [{:keys [namespace]} config
-        {:keys [keycloak-admin-user keycloak-admin-password]} auth]
+  (let [{:keys [namespace]} config]
     (->
      (yaml/load-as-edn "keycloak/service.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace))))
