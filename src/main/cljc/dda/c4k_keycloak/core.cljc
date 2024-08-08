@@ -30,18 +30,28 @@
                             ::postgres/postgres-db-user ::postgres/postgres-db-password]
                    :opt-un [::mon/mon-auth]))
 
-(defn-spec k8s-objects cp/map-or-seq?
+(defn-spec config-objects cp/map-or-seq?
+  [config config?]
+  (map yaml/to-string
+       (filter
+        #(not (nil? %))
+        (cm/concat-vec
+         (ns/generate config)
+         (postgres/generate-config config)
+         [(kc/generate-service config)
+          (kc/generate-deployment config)]
+         (kc/generate-ingress config)
+         (when (contains? config :mon-cfg)
+           (mon/generate-config))))))
+
+(defn-spec auth-objects cp/map-or-seq?
   [config config?
    auth auth?]
   (map yaml/to-string
        (filter
         #(not (nil? %))
         (cm/concat-vec
-         (ns/generate config)
-         (postgres/generate config auth)
-         [(kc/generate-secret config auth)
-          (kc/generate-service config)
-          (kc/generate-deployment config)]
-         (kc/generate-ingress config)
-         (when (:contains? config :mon-cfg)
-           (mon/generate (:mon-cfg config) (:mon-auth auth)))))))
+         (postgres/generate-auth config auth)
+         [(kc/generate-secret config auth)]
+         (when (and (contains? auth :mon-auth) (contains? config :mon-cfg))
+           (mon/generate-auth (:mon-config config) (:mon-auth auth)))))))
