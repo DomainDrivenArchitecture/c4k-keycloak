@@ -23,7 +23,7 @@ def initialize(project):
         "release_primary_build_file": "project.clj",
         "release_secondary_build_files": [
             "package.json",
-            ],
+        ],
         "release_artifact_server_url": "https://repo.prod.meissa.de",
         "release_organisation": "meissa",
         "release_repository_name": name,
@@ -100,6 +100,12 @@ def package_frontend(project):
 
 @task
 def package_uberjar(project):
+    run("mkdir -p target/uberjar", shell=True, check=True)
+    run(
+        "lein uberjar",
+        shell=True,
+        check=True,
+    )
     run(
         "sha256sum target/uberjar/c4k-keycloak-standalone.jar > target/uberjar/" + project.name + "-standalone.jar.sha256",
         shell=True,
@@ -126,13 +132,10 @@ def package_native(project):
         "--no-server " +
         "--no-fallback " +
         "--features=clj_easy.graal_build_time.InitClojureClasses " +
-        "-jar target/uberjar/" + project.name + "-standalone.jar " +
-        "-march=compatibility " +
-        "-H:+UnlockExperimentalVMOptions " +
+        f"-jar target/uberjar/{project.name}-standalone.jar " +
         "-H:IncludeResources=.*.yaml " +
-        "-H:IncludeResources=logback.xml " +
         "-H:Log=registerResource:verbose " +
-        "-H:Name=target/graalvm/" + project.name + "",
+        f"-H:Name=target/graalvm/{project.name}",
         shell=True,
         check=True,
     )
@@ -150,11 +153,7 @@ def package_native(project):
 
 @task
 def inst(project):
-    run(
-        "lein uberjar",
-        shell=True,
-        check=True,
-    )
+    package_uberjar(project)
     package_native(project)
     run(
         "sudo install -m=755 target/uberjar/" + project.name + "-standalone.jar /usr/local/bin/" + project.name + "-standalone.jar",
@@ -175,11 +174,6 @@ def upload_clj(project):
 
 @task
 def lint(project):
-    #run(
-    #    "lein eastwood",
-    #    shell=True,
-    #    check=True,
-    #)
     run(
         "lein ancient check",
         shell=True,
