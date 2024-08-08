@@ -60,5 +60,5 @@
     (-> 
      (yaml/load-as-edn "keycloak/deployment.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace)
-     (cm/replace-all-matching-values-by-new-value "FQDN" fqdn))))
+     (cm/replace-all-matching "FQDN" fqdn))))
   
