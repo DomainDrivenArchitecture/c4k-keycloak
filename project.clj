@@ -3,9 +3,9 @@
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
-  :dependencies [[org.clojure/clojure "1.11.3"]
+  :dependencies [[org.clojure/clojure "1.11.4"]
                  [org.clojure/tools.reader "1.4.2"]
-                 [org.domaindrivenarchitecture/c4k-common-clj "6.4.1"]]
+                 [org.domaindrivenarchitecture/c4k-common-clj "8.0.0"]]
   :target-path "target/%s/"
   :source-paths ["src/main/cljc"
                  "src/main/clj"]
@@ -24,7 +24,7 @@
                        :dependencies [[org.clojure/tools.cli "1.1.230"]
                                       [ch.qos.logback/logback-classic "1.5.6"
                                        :exclusions [com.sun.mail/javax.mail]]
-                                      [org.slf4j/jcl-over-slf4j "2.0.13"]
+                                      [org.slf4j/jcl-over-slf4j "2.0.14"]
                                       [com.github.clj-easy/graal-build-time "1.0.5"]]}}
   :release-tasks [["test"]
                   ["vcs" "assert-committed"]
