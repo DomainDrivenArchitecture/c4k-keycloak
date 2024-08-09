@@ -54,4 +54,4 @@
          (postgres/generate-auth config auth)
          [(kc/generate-secret config auth)]
          (when (and (contains? auth :mon-auth) (contains? config :mon-cfg))
-           (mon/generate-auth (:mon-config config) (:mon-auth auth)))))))
+           (mon/generate-auth (:mon-cfg config) (:mon-auth auth)))))))
