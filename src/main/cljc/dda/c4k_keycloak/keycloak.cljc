@@ -16,7 +16,8 @@
 (s/def ::keycloak-admin-user cp/bash-env-string?)
 (s/def ::keycloak-admin-password cp/bash-env-string?)
 
-(def config? (s/keys :req-un [::fqdn
+(def config? (s/keys :req-un [::fqdn]
+                     :opt-un [::issuer
                               ::namespace]))
 
 (def auth? (s/keys :req-un [::keycloak-admin-user 
