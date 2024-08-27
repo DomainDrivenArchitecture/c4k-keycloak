@@ -1,0 +1,15 @@
+# TODO: Make generate-configmap function
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-env
+  namespace: NAMESPACE
+data:
+  KC_HTTPS_CERTIFICATE_FILE: /etc/certs/tls.crt
+  KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/tls.key
+  KC_HOSTNAME: FQDN
+  KC_PROXY: edge         
+  DB_VENDOR: POSTGRES
+  DB_ADDR: postgresql-service
+  DB_SCHEMA: public
+  DB_DATABASE: postgres

@@ -25,46 +25,11 @@ spec:
         - name: keycloak-cert
           mountPath: /etc/certs
           readOnly: true
-        env:
-        - name: KC_HTTPS_CERTIFICATE_FILE
-          value: /etc/certs/tls.crt
-        - name: KC_HTTPS_CERTIFICATE_KEY_FILE
-          value: /etc/certs/tls.key
-        - name: KC_HOSTNAME
-          value: FQDN
-        - name: KC_PROXY
-          value: edge         
-        - name: DB_VENDOR
-          value: POSTGRES
-        - name: DB_ADDR
-          value: postgresql-service
-        - name: DB_SCHEMA
-          value: public
-        - name: DB_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: postgres-config
-              key: postgres-db
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: postgres-user
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: postgres-password
-        - name: KEYCLOAK_ADMIN
-          valueFrom:
-            secretKeyRef:
+        envFrom:
+          - configMapRef:
+              name: keycloak-env
+          - secretRef:
               name: keycloak-secret
-              key: keycloak-user
-        - name: KEYCLOAK_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: keycloak-secret
-              key: keycloak-password
         ports:
         - name: http
           containerPort: 8080
