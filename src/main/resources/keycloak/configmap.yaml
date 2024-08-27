@@ -8,6 +8,7 @@ data:
   KC_HTTPS_CERTIFICATE_FILE: /etc/certs/tls.crt
   KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/tls.key
   KC_HOSTNAME: FQDN
+  KC_HOSTNAME_ADMIN: ADMIN_FQDN
   KC_PROXY: edge         
   DB_VENDOR: POSTGRES
   DB_ADDR: postgresql-service
