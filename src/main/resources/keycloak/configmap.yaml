@@ -13,3 +13,7 @@ data:
   DB_ADDR: postgresql-service
   DB_SCHEMA: public
   DB_DATABASE: postgres
+  # TODO Do we need to enable http, as we are behind ingress?
+  # KC_HTTP_ENABLED: true
+  # TODO Maybe also enable load shedding
+  # KC_HTTP_MAX_QUEUED_REQUESTS: 2000

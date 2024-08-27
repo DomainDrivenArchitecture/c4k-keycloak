@@ -25,7 +25,7 @@
 #?(:cljs
    (defmethod yaml/load-resource :keycloak [resource-name]
      (get (inline-resources "keycloak") resource-name)))
-
+; TODO: Use rate-limit ingress
 (defn-spec generate-ingress cp/map-or-seq?
   [config config?]
   (ing/generate-ingress-and-cert
