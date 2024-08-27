@@ -25,15 +25,18 @@
 #?(:cljs
    (defmethod yaml/load-resource :keycloak [resource-name]
      (get (inline-resources "keycloak") resource-name)))
-; TODO: Use rate-limit ingress
-(defn-spec generate-ingress cp/map-or-seq?
+
+(defn-spec generate-ratelimit-ingress seq?
   [config config?]
-  (ing/generate-ingress-and-cert
-   (merge
-    {:service-name "keycloak"
-     :service-port 80
-     :fqdns [(:fqdn config)]}
-    config)))
+  (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
+    (ing/generate-simple-ingress (merge
+                                  {:service-name "forgejo-service"
+                                   :service-port 3000
+                                   :fqdns [fqdn]
+                                   :average-rate max-rate
+                                   :burst-rate max-concurrent-requests
+                                   :namespace namespace}
+                                  config))))
 
 (defn-spec generate-secret cp/map-or-seq?
   [config config?
@@ -52,7 +55,7 @@
     (->
      (yaml/load-as-edn "keycloak/service.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace))))
-
+; TODO: Fix test
 (defn-spec generate-deployment cp/map-or-seq?
   [config config?]
   (let [{:keys [fqdn namespace]} config]
