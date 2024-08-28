@@ -42,12 +42,14 @@
   [config config?
    auth auth?]
   (let [{:keys [namespace]} config
-        {:keys [keycloak-admin-user keycloak-admin-password]} auth]
+        {:keys [keycloak-admin-user keycloak-admin-password postgres-db-user postgres-db-password]} auth]
     (->
      (yaml/load-as-edn "keycloak/secret.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace)
-     (cm/replace-key-value :keycloak-user (b64/encode keycloak-admin-user))
-     (cm/replace-key-value :keycloak-password (b64/encode keycloak-admin-password)))))
+     (cm/replace-all-matching "DBUSER" (b64/encode postgres-db-user))
+     (cm/replace-all-matching "DBPW" (b64/encode postgres-db-password))
+     (cm/replace-all-matching "ADMIN_USER" (b64/encode keycloak-admin-user))
+     (cm/replace-all-matching "ADMIN_PASS" (b64/encode keycloak-admin-password)))))
 
 (defn-spec generate-service cp/map-or-seq? 
   [config config?]

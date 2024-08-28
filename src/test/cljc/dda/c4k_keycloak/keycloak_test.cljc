@@ -13,9 +13,14 @@
           :metadata {:name "keycloak-secret", :namespace "keycloak"}
           :type "Opaque"
           :data
-          {:keycloak-user "dXNlcg=="
-           :keycloak-password "cGFzc3dvcmQ="}}
-         (cut/generate-secret {:namespace "keycloak" :fqdn "test.de"} {:keycloak-admin-user "user" :keycloak-admin-password "password"}))))
+          {:KEYCLOAK_ADMIN "dXNlcg=="
+           :KEYCLOAK_ADMIN_PASSWORD "cGFzc3dvcmQ="
+           :DB_USER "a2V5Y2xvYWs="
+           :DB_PASSWORD "ZGItcGFzc3dvcmQ="}}
+         (cut/generate-secret {:namespace "keycloak" :fqdn "test.de"} 
+                              {:keycloak-admin-user "user" :keycloak-admin-password "password"
+                               :postgres-db-user "keycloak"
+                               :postgres-db-password "db-password"}))))
 
 (deftest should-generate-deployment
   (is (= {:name "keycloak", :namespace "keycloak", :labels {:app "keycloak"}}
