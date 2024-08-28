@@ -34,7 +34,7 @@
            :KC_PROXY "edge",
            :KC_DB "postgres",
            :KC_DB_URL_HOST "postgresql-service",
-           :KC_DB_URL_PORT 5432}}
+           :KC_DB_URL_PORT "5432"}}
          (cut/generate-configmap {:namespace "keycloak" :fqdn "test.de"}))))
 
 (deftest should-generate-deployment
