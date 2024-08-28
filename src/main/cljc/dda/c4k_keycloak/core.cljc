@@ -19,7 +19,9 @@
                       :postgres-size :2gb
                       :db-name "keycloak"
                       :pv-storage-size-gb 30
-                      :pvc-storage-class-name default-storage-class})
+                      :pvc-storage-class-name default-storage-class
+                      :max-rate 100
+                      :max-concurrent-requests 50})
 
 (def config? (s/keys :req-un [::kc/fqdn]
                      :opt-un [::kc/issuer
