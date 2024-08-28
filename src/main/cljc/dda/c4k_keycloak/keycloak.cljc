@@ -51,6 +51,15 @@
      (cm/replace-all-matching "ADMIN_USER" (b64/encode keycloak-admin-user))
      (cm/replace-all-matching "ADMIN_PASS" (b64/encode keycloak-admin-password)))))
 
+(defn-spec generate-configmap cp/map-or-seq?
+  [config config?]
+  (let [{:keys [namespace fqdn]} config]
+    (->
+     (yaml/load-as-edn "keycloak/configmap.yaml")
+     (cm/replace-all-matching "NAMESPACE" namespace)
+     (cm/replace-all-matching "FQDN" fqdn)
+     (cm/replace-all-matching "ADMIN_FQDN" (str "control." fqdn))))) ; TODO Document this
+
 (defn-spec generate-service cp/map-or-seq? 
   [config config?]
   (let [{:keys [namespace]} config]

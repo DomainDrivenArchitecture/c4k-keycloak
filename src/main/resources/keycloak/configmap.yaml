@@ -1,4 +1,3 @@
-# TODO: Make generate-configmap function
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,10 +9,9 @@ data:
   KC_HOSTNAME: FQDN
   KC_HOSTNAME_ADMIN: ADMIN_FQDN
   KC_PROXY: edge         
-  DB_VENDOR: POSTGRES
-  DB_ADDR: postgresql-service
-  DB_SCHEMA: public
-  DB_DATABASE: postgres
+  KC_DB: postgres
+  KC_DB_URL_HOST: postgresql-service
+  KC_DB_URL_PORT: 5432
   # TODO Do we need to enable http, as we are behind ingress?
   # KC_HTTP_ENABLED: true
   # TODO Maybe also enable load shedding

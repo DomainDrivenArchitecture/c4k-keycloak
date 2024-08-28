@@ -22,6 +22,21 @@
                                :postgres-db-user "keycloak"
                                :postgres-db-password "db-password"}))))
 
+(deftest should-generate-configmap
+  (is (= {:apiVersion "v1",
+          :kind "ConfigMap",
+          :metadata {:name "keycloak-env", :namespace "keycloak"},
+          :data
+          {:KC_HTTPS_CERTIFICATE_FILE "/etc/certs/tls.crt",
+           :KC_HTTPS_CERTIFICATE_KEY_FILE "/etc/certs/tls.key",
+           :KC_HOSTNAME "test.de" ,
+           :KC_HOSTNAME_ADMIN "control.test.de",
+           :KC_PROXY "edge",
+           :KC_DB "postgres",
+           :KC_DB_URL_HOST "postgresql-service",
+           :KC_DB_URL_PORT 5432}}
+         (cut/generate-configmap {:namespace "keycloak" :fqdn "test.de"}))))
+
 (deftest should-generate-deployment
   (is (= {:name "keycloak", :namespace "keycloak", :labels {:app "keycloak"}}
          (:metadata (cut/generate-deployment {:fqdn "example.com" :namespace "keycloak"})))))

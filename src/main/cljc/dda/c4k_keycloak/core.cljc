@@ -38,7 +38,8 @@
         (cm/concat-vec
          (ns/generate config)
          (postgres/generate-config config)
-         [(kc/generate-service config)
+         [(kc/generate-configmap config)
+          (kc/generate-service config)
           (kc/generate-deployment config)]
          (kc/generate-ratelimit-ingress config)
          (when (contains? config :mon-cfg)
