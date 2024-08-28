@@ -32,7 +32,7 @@ spec:
           - secretRef:
               name: keycloak-secret
         ports:
-        - name: http
+        - name: keycloak
           containerPort: 8080
       volumes:
         - name: keycloak-cert
