@@ -11,7 +11,7 @@ data:
   KC_PROXY: edge         
   KC_DB: postgres
   KC_DB_URL_HOST: postgresql-service
-  KC_DB_URL_PORT: 5432
+  KC_DB_URL_PORT: "5432"
   # TODO Do we need to enable http, as we are behind ingress?
   # KC_HTTP_ENABLED: true
   # TODO Maybe also enable load shedding
