@@ -18,7 +18,9 @@
 
 (def config? (s/keys :req-un [::fqdn]
                      :opt-un [::issuer
-                              ::namespace]))
+                              ::namespace
+                              ::max-rate
+                              ::burst-rate]))
 
 (def auth? (s/keys :req-un [::keycloak-admin-user 
                             ::keycloak-admin-password]))
@@ -31,7 +33,7 @@
   [config config?]
   (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
     (ing/generate-simple-ingress (merge
-                                  {:service-name "forgejo-service"
+                                  {:service-name "keycloak-service"
                                    :service-port 3000
                                    :fqdns [fqdn]
                                    :average-rate max-rate
