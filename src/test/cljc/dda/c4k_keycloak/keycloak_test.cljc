@@ -13,10 +13,10 @@
           :metadata {:name "keycloak-secret", :namespace "keycloak"}
           :type "Opaque"
           :data
-          {:KEYCLOAK_ADMIN "dXNlcg=="
-           :KEYCLOAK_ADMIN_PASSWORD "cGFzc3dvcmQ="
-           :DB_USER "a2V5Y2xvYWs="
-           :DB_PASSWORD "ZGItcGFzc3dvcmQ="}}
+          {:KC_DB_USERNAME "a2V5Y2xvYWs="
+           :KC_DB_PASSWORD "ZGItcGFzc3dvcmQ="
+           :KEYCLOAK_ADMIN "dXNlcg=="
+           :KEYCLOAK_ADMIN_PASSWORD "cGFzc3dvcmQ="}}
          (cut/generate-secret {:namespace "keycloak" :fqdn "test.de"} 
                               {:keycloak-admin-user "user" :keycloak-admin-password "password"
                                :postgres-db-user "keycloak"
