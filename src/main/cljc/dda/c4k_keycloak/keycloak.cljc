@@ -55,12 +55,11 @@
     (->
      (yaml/load-as-edn "keycloak/service.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace))))
-; TODO: Fix test
+
 (defn-spec generate-deployment cp/map-or-seq?
   [config config?]
   (let [{:keys [fqdn namespace]} config]
-    (-> 
+    (->
      (yaml/load-as-edn "keycloak/deployment.yaml")
-     (cm/replace-all-matching "NAMESPACE" namespace)
-     (cm/replace-all-matching "FQDN" fqdn))))
+     (cm/replace-all-matching "NAMESPACE" namespace))))
   
