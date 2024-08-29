@@ -1,3 +1,5 @@
+# Hostname config:
+# https://www.keycloak.org/server/hostname#_exposing_the_administration_console_on_a_separate_hostname
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,8 +8,9 @@ metadata:
 data:
   KC_HTTPS_CERTIFICATE_FILE: /etc/certs/tls.crt
   KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/tls.key
+  # This is the hostname under which the keycloak is accessible on the internet
+  # This hostname actually needs to an url specifying a scheme from which a port is derived
   KC_HOSTNAME: FQDN
-  KC_HOSTNAME_ADMIN: ADMIN_FQDN
   KC_DB: postgres
   KC_DB_URL_HOST: postgresql-service
   KC_DB_URL_PORT: "5432"
