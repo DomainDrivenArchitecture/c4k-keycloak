@@ -36,7 +36,7 @@
   (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
     (ing/generate-simple-ingress (merge
                                   {:service-name "keycloak"
-                                   :service-port 8080
+                                   :service-port 80
                                    :fqdns [fqdn]
                                    :average-rate max-rate
                                    :burst-rate max-concurrent-requests
