@@ -42,8 +42,10 @@
          (postgres/generate-config config)
          [(kc/generate-configmap config)
           (kc/generate-service config)
+          (kc/generate-service-management-interface config)
           (kc/generate-deployment config)]
          (kc/generate-ratelimit-ingress config)
+         (kc/generate-ratelimit-ingress-management-interface config)
          (when (contains? config :mon-cfg)
            (mon/generate-config))))))
 

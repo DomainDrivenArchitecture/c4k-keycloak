@@ -43,6 +43,18 @@
                                    :namespace namespace}
                                   config))))
 
+(defn-spec generate-ratelimit-ingress-management-interface seq?
+  [config config?]
+  (let [{:keys [fqdn max-rate max-concurrent-requests namespace]} config]
+    (ing/generate-simple-ingress (merge
+                                  {:service-name "keycloak-management-interface"
+                                   :service-port 80
+                                   :fqdns [(str "control." fqdn)]
+                                   :average-rate max-rate
+                                   :burst-rate max-concurrent-requests
+                                   :namespace namespace}
+                                  config))))
+
 (defn-spec generate-secret cp/map-or-seq?
   [config config?
    auth auth?]
@@ -70,6 +82,13 @@
   (let [{:keys [namespace]} config]
     (->
      (yaml/load-as-edn "keycloak/service.yaml")
+     (cm/replace-all-matching "NAMESPACE" namespace))))
+
+(defn-spec generate-service-management-interface cp/map-or-seq?
+  [config config?]
+  (let [{:keys [namespace]} config]
+    (->
+     (yaml/load-as-edn "keycloak/service-management-interface.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace))))
 
 (defn-spec generate-deployment cp/map-or-seq?
