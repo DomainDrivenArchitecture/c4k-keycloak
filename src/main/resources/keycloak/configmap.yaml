@@ -8,11 +8,10 @@ data:
   KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/tls.key
   KC_HOSTNAME: FQDN
   KC_HOSTNAME_ADMIN: ADMIN_FQDN
-  KC_PROXY: edge         
   KC_DB: postgres
   KC_DB_URL_HOST: postgresql-service
   KC_DB_URL_PORT: "5432"
-  # TODO Do we need to enable http, as we are behind ingress?
-  # KC_HTTP_ENABLED: true
+  # We need to enable http, as we are behind an ingress
+  KC_HTTP_ENABLED: "true"
   # TODO Maybe also enable load shedding
   # KC_HTTP_MAX_QUEUED_REQUESTS: 2000

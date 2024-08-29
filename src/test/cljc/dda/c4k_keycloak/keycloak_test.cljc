@@ -31,10 +31,10 @@
            :KC_HTTPS_CERTIFICATE_KEY_FILE "/etc/certs/tls.key",
            :KC_HOSTNAME "test.de" ,
            :KC_HOSTNAME_ADMIN "control.test.de",
-           :KC_PROXY "edge",
            :KC_DB "postgres",
            :KC_DB_URL_HOST "postgresql-service",
-           :KC_DB_URL_PORT "5432"}}
+           :KC_DB_URL_PORT "5432",
+           :KC_HTTP_ENABLED "true"}}
          (cut/generate-configmap {:namespace "keycloak" :fqdn "test.de"}))))
 
 (deftest should-generate-deployment
