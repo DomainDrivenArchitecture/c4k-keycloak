@@ -29,7 +29,8 @@
           :data
           {:KC_HTTPS_CERTIFICATE_FILE "/etc/certs/tls.crt",
            :KC_HTTPS_CERTIFICATE_KEY_FILE "/etc/certs/tls.key",
-           :KC_HOSTNAME "https://test.de" ,
+           :KC_HOSTNAME "test.de" ,
+           :KC_PROXY_HEADERS "xforwarded" ,
            :KC_DB "postgres",
            :KC_DB_URL_HOST "postgresql-service",
            :KC_DB_URL_PORT "5432",

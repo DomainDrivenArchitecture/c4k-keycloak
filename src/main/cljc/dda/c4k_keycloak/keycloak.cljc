@@ -62,7 +62,7 @@
     (->
      (yaml/load-as-edn "keycloak/configmap.yaml")
      (cm/replace-all-matching "NAMESPACE" namespace)
-     (cm/replace-all-matching "FQDN" (str "https://" fqdn)))))
+     (cm/replace-all-matching "FQDN" fqdn))))
 
 (defn-spec generate-service cp/map-or-seq?
   [config config?]

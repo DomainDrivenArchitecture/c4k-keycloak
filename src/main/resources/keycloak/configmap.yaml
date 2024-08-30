@@ -8,9 +8,11 @@ metadata:
 data:
   KC_HTTPS_CERTIFICATE_FILE: /etc/certs/tls.crt
   KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/tls.key
-  # This is the hostname under which the keycloak is accessible on the internet
-  # This hostname actually needs to an url specifying a scheme from which a port is derived
+  # We trust our traefik to properly set headers
+  # see: https://www.keycloak.org/server/reverseproxy & https://www.keycloak.org/server/hostname
+  # and: https://doc.traefik.io/traefik/getting-started/faq/#what-are-the-forwarded-headers-when-proxying-http-requests
   KC_HOSTNAME: FQDN
+  KC_PROXY_HEADERS: xforwarded
   KC_DB: postgres
   KC_DB_URL_HOST: postgresql-service
   KC_DB_URL_PORT: "5432"
