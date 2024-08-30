@@ -1,0 +1,28 @@
+- ## Outline - Keycloak&Forgejo integration
+	- ### Forgejo-Seite
+		- Forgejo Test mit v8.0 hochziehen
+		- ### Config
+			- https://s3lph.me/ldap-to-oidc-migration-1-forgejo.html
+			- OpenID Connect Auto Discovery URL finden
+				- https://keycloak.discourse.group/t/changes-in-oidc-token-endpoints/18024/3
+					- `https://<full server dns name>/realms/<realm_name>`
+					- macht aber eine Zertifikatsprüfung -> tut nur mit prod zert
+				- key von keycloak eintragen
+			- forgejo-test user anlegen
+				- oidc auth source festlegen
+	- ## Keycloak-Seite
+        - Keycloak mit c4k/keycloak kc-upgrade-and-integration Branch hochziehen
+		- Admin login über keycloak.test.meissa.de/realms/master/account/
+		- [Getting started with kubernetes](https://www.keycloak.org/getting-started/getting-started-kube)
+			- Achtung URL für Userlogin ist <hostname>/realms/<realmname>/account
+		- Achtung: Pro realm angelegte user können sich auch nur pro realm einloggen
+		- Im master realm: https://keycloak.test.meissa.de/realms/master/account:
+			- Meissa realm anlegen
+			- "Forgejotest" user anlegen
+			- Forgejo-client anlegen
+				- Root url ist schema + hostname
+				- Client secret anlegen
+                    - Schalter bei Client Authentication umlegen
+					- Capability config
+						- https://stackoverflow.com/questions/44752273/do-keycloak-clients-have-a-client-secret/69726692#69726692
+					- Keys anlegen und public key bei forgejo eintragen
